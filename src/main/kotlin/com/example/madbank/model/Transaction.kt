@@ -25,6 +25,9 @@ class Transaction (
     @Column
     public var cost:Long,
 
+    @Column
+    public var resultCode:String,
+
 
 
 )
