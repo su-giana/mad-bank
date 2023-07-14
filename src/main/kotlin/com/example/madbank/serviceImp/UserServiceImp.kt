@@ -94,5 +94,8 @@ class UserServiceImp :UserService{
         throw PasswordNotMatchesException("Your password is wrong")
     }
 
+    override fun getBalanceById(id: Long): Long {
+        return userMapper.getBalanceById(id)
+    }
 
 }
