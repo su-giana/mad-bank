@@ -7,6 +7,7 @@ import com.example.madbank.service.UserService
 import com.example.madbank.user_exception.AlreadyRegisteredException
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
+import org.springframework.security.core.Authentication
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
@@ -51,7 +52,7 @@ class UserController {
             print(id + " " + password)
 
 
-            var token: org.springframework.security.core.Authentication = userService.login(id, password)
+            var token:Authentication = userService.login(id, password)
             var body:String = jwtTokenUtil.generateAccessToken(token)
 
             return ResponseEntity.ok(body)

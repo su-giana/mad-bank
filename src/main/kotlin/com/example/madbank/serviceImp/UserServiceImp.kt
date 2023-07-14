@@ -20,7 +20,7 @@ class UserServiceImp :UserService{
     @Autowired
     lateinit var userMapper: UserMapper
 
-    private var passwordEncoder: PasswordEncoder = BCryptPasswordEncoder()
+    private final var passwordEncoder: PasswordEncoder = BCryptPasswordEncoder()
 
     override fun isIdAlreadyExist(id: String): Boolean {
         if(userMapper.getUserBySignUpId(id) == null)    return false
@@ -43,7 +43,12 @@ class UserServiceImp :UserService{
 
     override fun insertUser(user: User) {
         try {
-            userMapper.insertUser(user)
+            if(!user.name.equals("") && !user.phone.equals("") && !user.nationalId.equals(""))
+            {
+                user.password = passwordEncoder.encode(user.password)
+                userMapper.insertUser(user)
+            }
+
         }
         catch (e:Exception)
         {
@@ -72,8 +77,7 @@ class UserServiceImp :UserService{
     }
 
     override fun login(id: String, password: String):Authentication {
-        var token:UsernamePasswordAuthenticationToken
-        var user:User = userMapper.getUserBySignUpId(id)
+        val user:User = userMapper.getUserBySignUpId(id)
 
         if(user==null)
         {
@@ -85,10 +89,7 @@ class UserServiceImp :UserService{
             // valid password and id
             var roles:List<GrantedAuthority> = ArrayList()
             roles += SimpleGrantedAuthority("USER")
-
-            token = UsernamePasswordAuthenticationToken(user.id, null, roles)
-
-            return token
+            return UsernamePasswordAuthenticationToken(user.id, null, roles)
         }
         // password not match
         throw PasswordNotMatchesException("Your password is wrong")
