@@ -1,10 +1,7 @@
 package com.example.madbank.security
 
-import com.example.madbank.user_exception.NotValidToken
-import io.jsonwebtoken.Claims
-import io.jsonwebtoken.Jws
-import io.jsonwebtoken.Jwt
-import io.jsonwebtoken.Jwts
+import com.example.madbank.user_exception.NotValidTokenException
+import io.jsonwebtoken.*
 import io.jsonwebtoken.security.Keys
 import lombok.Value
 import org.springframework.security.core.Authentication
@@ -21,7 +18,7 @@ class JwtTokenUtil {
     @org.springframework.beans.factory.annotation.Value("\${app.jwtSecret}")
     private lateinit var jwtSecret:String
 
-    @org.springframework.beans.factory.annotation.Value("\${app.jwtExpirationMs}")
+    @org.springframework.beans.factory.annotation.Value("\${app.jwtExpirationsMs}")
     private lateinit var jwtExpirationMs : String
 
     private lateinit var key:Key
@@ -55,14 +52,31 @@ class JwtTokenUtil {
                 .body.expiration.before(Date())
     }
 
-    public fun generateToken(authentication: Authentication):String
+    public fun generateAccessToken(authentication: Authentication):String
     {
         var now:Date = Date()
         var expiry:Date = Date(now.time + jwtExpirationMs.toInt())
 
-        var principal = authentication.principal
+        var principal:String = authentication.principal.toString()
 
-        if(principal == null)   throw InvalidTo
+        if(principal == null || principal == "")
+            throw NotValidTokenException("cannot generate your token, your authentication is broken")
+
+        return Jwts.builder()
+                .setSubject(principal)
+                .setIssuedAt(now)
+                .setExpiration(expiry)
+                .signWith(SignatureAlgorithm.HS512, jwtSecret.toByteArray())
+                .compact()
+    }
+
+    public fun extractUserId(token:String): Long
+    {
+        var principal:String = Optional.ofNullable(token)
+                .map{ t -> Jwts.parser().setSigningKey(jwtSecret.toByteArray()).parseClaimsJws(t).body.subject }
+                .orElseThrow { NotValidTokenException("cannot extract userId, your authentication is broken") }
+
+        return principal.toLong()
     }
 
 }

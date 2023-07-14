@@ -28,9 +28,12 @@ class SecurityConfig {
                 .antMatchers("/signup/**", "/login/**", "/auth/**", "/").permitAll()
                 .anyRequest().permitAll()
 
+        http.csrf().disable()
+
         return http.build()
     }
 
+    @Bean
     public fun webSecurityCustomizer():WebSecurityCustomizer
     {
         return WebSecurityCustomizer { web: WebSecurity ->

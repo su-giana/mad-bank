@@ -6,6 +6,7 @@
     <properties resource="application.properties"/>
 
     <typeAliases>
+        <typeAlias type="com.example.madbank.model.User" alias="User" />
     </typeAliases>
 
     <mappers>

@@ -1,2 +1,45 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.madbank.mapper.UserMapper">
+    <select id="getUserById" resultType="User">
+        SELECT *
+        FROM user
+        WHERE id = #{id}
+    </select>
+
+    <select id="getUserBySignUpId" resultType="User">
+        SELECT *
+        FROM user
+        WHERE sign_up_id = #{id}
+    </select>
+
+    <select id="getUserByNationalId" resultType="User">
+        SELECT *
+        FROM user
+        WHERE national_id = #{id}
+    </select>
+
+    <insert id="insertUser">
+        INSERT INTO user
+        (name, phone, password, dob, national_id, sign_up_id)
+        VALUES
+            (#{name}, #{phone}, #{password}, #{dob}, #{nationalId}, #{signUpId})
+    </insert>
+
+    <update id="updateUser">
+        UPDATE user
+        SET name = #{name},
+            phone = #{phone},
+            password = #{password},
+            dob = #{dob},
+            national_id = #{nationalId},
+            sign_up_id = #{signUpId}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteUser">
+        DELETE
+        FROM user
+        WHERE id = #{id}
+    </delete>
+</mapper>
