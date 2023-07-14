@@ -61,6 +61,8 @@ class JwtTokenUtil {
         var expiry:Date = Date(now.time + jwtExpirationMs.toInt())
 
         var principal = authentication.principal
+
+        if(principal == null)   throw InvalidTo
     }
 
 }
