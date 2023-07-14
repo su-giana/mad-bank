@@ -21,5 +21,5 @@ interface UserService {
 
     public fun login(id:String, password:String):Authentication
 
-    public fun getBalanceById(id:Long):Long
+    public fun getBalanceByuserId(id:Long):Long
 }

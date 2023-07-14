@@ -42,4 +42,10 @@
         FROM user
         WHERE id = #{id}
     </delete>
+
+    <select id="getBalanceByuserId" resultType="Long">
+        SELECT
+        FROM account
+        WHERE user_id = #{userId}
+    </select>
 </mapper>
