@@ -41,9 +41,11 @@ class UserController {
         }
         catch (e:Exception)
         {
-
+            throw e
         }
     }
+
+
 
 
 }
