@@ -7,3 +7,5 @@ class PasswordNotMatchesException(message : String) : Exception(message)
 {
 
 }
+
+class NotValidToken(message:String):Exception(message){}
