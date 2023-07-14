@@ -20,4 +20,6 @@ interface UserService {
     public fun deleteUser(id:Long)
 
     public fun login(id:String, password:String):Authentication
+
+    public fun getBalanceById(id:Long):Long
 }
