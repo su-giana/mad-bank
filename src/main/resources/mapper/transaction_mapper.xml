@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.madbank.mapper.TransactionMapper">
+
+    <update id="updateBalance">
+        UPDATE account
+        SET balance = #{balance}
+        WHERE user_id = #{userId}
+    </update>
+
+    <update id="changeResultcode">
+        UPDATE transaction
+        SET resultCode = 'Success'
+        WHERE transactionId = #{transactionId}
+    </update>
+
+
+</mapper>
