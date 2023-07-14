@@ -55,7 +55,7 @@ class TransactionController {
     {
         try{  //만약 없는 유저의 아이디를 검색하면 일단 오류가 남. ㅜㅜ
             if(userService.isUserAlreadyExist(id)){
-                var balance:Long = userService.getBalanceById(id)
+                var balance:Long = userService.getBalanceByuserId(id)
                 var value:String = balance.toString()
                 return ResponseEntity.ok(value) // string -> html.//header body로 날리려면 http 통신을 위해서는  무조건 response 써야 함.
             }else{
