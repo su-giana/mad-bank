@@ -1,6 +1,7 @@
 package com.example.madbank.service
 
 import com.example.madbank.model.User
+import org.springframework.security.core.Authentication
 
 
 interface UserService {
@@ -18,5 +19,5 @@ interface UserService {
 
     public fun deleteUser(id:Long)
 
-    public fun login(id:String, password:String)
+    public fun login(id:String, password:String):Authentication
 }

@@ -1,4 +1,4 @@
-package com.example.madbank
+package com.example.madbank.model
 
 import lombok.Data
 import javax.persistence.Column
@@ -6,20 +6,25 @@ import javax.persistence.Entity
 import javax.persistence.GeneratedValue
 import javax.persistence.Id
 
-
 @Entity
 @Data
-class Account (
+class Transaction (
     @Id
     @GeneratedValue
-    public var accountId: Long,
+    public var transactionId:Long,
 
     @Column
-    public var userId:Long,
+    public var senderId:Long,
 
     @Column
-    public var accountNumber:Long,
+    public var receiverId:Long,
 
     @Column
-    public var balance:Long,
+    public var transactionType: String,
+
+    @Column
+    public var cost:Long,
+
+
+
 )
