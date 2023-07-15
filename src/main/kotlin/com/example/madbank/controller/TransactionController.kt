@@ -24,9 +24,9 @@ class TransactionController {
     lateinit var jwtTokenUtil: JwtTokenUtil
 
     @GetMapping("/transfer_money")
-    public fun transferMoney(@RequestHeader("Authorization") token:String,
+    public fun transferMoney(
             @RequestParam(value="transactionId", required=true) transactionId:Long,
-            // @RequestParam(value="senderId", required = true) senderId:Long,
+            @RequestParam(value="senderId", required = true) senderId:Long,
             @RequestParam(value="receiverId", required = true) receiverId:Long,
             @RequestParam(value="transactionType", required = true) transactionType:String,
             @RequestParam(value="cost", required = true) cost:Long,
@@ -38,9 +38,6 @@ class TransactionController {
         //4. receiverId의 금액 추가 =>addReceiverBalance, UpdateUser
         //5. resultCode를 'Success'로 설정한다.
         try {
-            if(!jwtTokenUtil.validateToken(token))  throw NotValidTokenException("User token is not valid for transfer")
-
-            var senderId:Long = jwtTokenUtil.extractUserId(token)
 
             if(userService.isUserAlreadyExist(senderId)&&userService.isUserAlreadyExist(receiverId)){
                 if(transactionService.isBalanceEnough(senderId, cost)){
@@ -56,7 +53,7 @@ class TransactionController {
             }
         }catch (e:Exception)
         {
-            throw e
+            return ResponseEntity.badRequest().body("Cannot transfer money")
         }
     }
 
