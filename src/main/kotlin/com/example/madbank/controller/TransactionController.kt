@@ -1,12 +1,15 @@
 package com.example.madbank.controller
 
 import com.example.madbank.model.User
+import com.example.madbank.security.JwtTokenUtil
 import com.example.madbank.service.TransactionService
 import com.example.madbank.service.UserService
+import com.example.madbank.user_exception.NotValidTokenException
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestParam
 
 @Controller
@@ -17,10 +20,13 @@ class TransactionController {
     @Autowired
     lateinit var userService: UserService
 
+    @Autowired
+    lateinit var jwtTokenUtil: JwtTokenUtil
+
     @GetMapping("/transfer_money")
-    public fun transferMoney(
+    public fun transferMoney(@RequestHeader("Authorization") token:String,
             @RequestParam(value="transactionId", required=true) transactionId:Long,
-            @RequestParam(value="senderId", required = true) senderId:Long,
+            // @RequestParam(value="senderId", required = true) senderId:Long,
             @RequestParam(value="receiverId", required = true) receiverId:Long,
             @RequestParam(value="transactionType", required = true) transactionType:String,
             @RequestParam(value="cost", required = true) cost:Long,
@@ -32,6 +38,10 @@ class TransactionController {
         //4. receiverId의 금액 추가 =>addReceiverBalance, UpdateUser
         //5. resultCode를 'Success'로 설정한다.
         try {
+            if(!jwtTokenUtil.validateToken(token))  throw NotValidTokenException("User token is not valid for transfer")
+
+            var senderId:Long = jwtTokenUtil.extractUserId(token)
+
             if(userService.isUserAlreadyExist(senderId)&&userService.isUserAlreadyExist(receiverId)){
                 if(transactionService.isBalanceEnough(senderId, cost)){
                     transactionService.deductSenderBalance(senderId, cost)
@@ -51,11 +61,15 @@ class TransactionController {
     }
 
     @GetMapping("/get_balance")
-    public fun getBalance(@RequestParam(value = "id", required=true) id:Long): ResponseEntity<String>
+    public fun getBalance(@RequestHeader("Authorization") token:String): ResponseEntity<String>
     {
         try{  //만약 없는 유저의 아이디를 검색하면 일단 오류가 남. ㅜㅜ
-            if(userService.isUserAlreadyExist(id)){
-                var balance:Long = userService.getBalanceById(id)
+            if(!jwtTokenUtil.validateToken(token)) throw NotValidTokenException("token is not valid")
+
+            var id:Long = jwtTokenUtil.extractUserId(token)
+
+                if(userService.isUserAlreadyExist(id)!=null){
+                var balance:Long = userService.getBalanceByuserId(id)
                 var value:String = balance.toString()
                 return ResponseEntity.ok(value) // string -> html.//header body로 날리려면 http 통신을 위해서는  무조건 response 써야 함.
             }else{
