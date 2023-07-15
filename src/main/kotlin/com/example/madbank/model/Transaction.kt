@@ -13,9 +13,11 @@ class Transaction (
     @GeneratedValue
     public var transactionId:Long,
 
+    // account
     @Column
     public var senderId:Long,
 
+    //account
     @Column
     public var receiverId:Long,
 
@@ -27,7 +29,5 @@ class Transaction (
 
     @Column
     public var resultCode:String,
-
-
 
 )
