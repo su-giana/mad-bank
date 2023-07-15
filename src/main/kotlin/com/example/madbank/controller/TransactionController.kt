@@ -49,12 +49,12 @@ class TransactionController {
                     transactionService.deductSenderBalance(senderId, cost)
                     transactionService.addReceiverBalance(receiverId, cost)
                     transactionService.admitTransfercode(transactionType)
-                    return ResponseEntity.ok("$transactionType transfer success. happyhappyhappy")
+                    return ResponseEntity.ok("SUCCEED")
                 }else{
-                    return ResponseEntity.ok("Error Occur: Sender doesn't have enough money to transfer haha.\uD83D\uDC7B from JY")
+                    return ResponseEntity.ok("FAILED")
                 }
             }else{
-                return ResponseEntity.ok("User doesn't exist in DB haha from.\uD83D\uDC7B Jiyeon")
+                return ResponseEntity.badRequest().body("User doesn't exist in DB haha from.\uD83D\uDC7B Jiyeon")
             }
         }catch (e:Exception)
         {
