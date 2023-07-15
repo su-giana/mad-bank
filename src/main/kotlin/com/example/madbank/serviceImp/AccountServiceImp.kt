@@ -11,8 +11,12 @@ class AccountServiceImp:AccountService {
     @Autowired
     lateinit var accountMapper: AccountMapper
 
-    override fun createAccount(id: Long) {
-        accountMapper.createAccount(id)
+    override fun createAccount(userId: Long) {
+        var newAccountNumber = accountMapper.getLastAccountNumber() + 1
+        accountMapper.createAccount(userId, newAccountNumber)
+    }
+    override fun isAccountAlreadyExist(userId: Long): Long {
+        return isAccountAlreadyExist(userId)
     }
 
 }

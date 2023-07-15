@@ -3,9 +3,24 @@
 <mapper namespace="com.example.madbank.mapper.AccountMapper">
 
     <insert id="createAccount">
-        INSERT INTO `account` (`user_id`)
-        VALUES (#{userId})
+        INSERT INTO account (user_id, account_number)
+        VALUES (#{userId}, #{accountNumber})
     </insert>
 
+    <select id="isAccountAlreadyExist">
+        SELECT ifnull(max(user_id),0) user_id
+        From account
+        WHERE user_id=#{userId}
+    </select>
 
+    <select id="getAccountNumberByuserId">
+        SELECT ifnull(max(account_number),0) account_number
+        From account
+        WHERE user_id=#{userId}
+    </select>
+
+    <select id="getLastAccountNumber">
+        SELECT MAX(account_number)
+        From account;
+    </select>
 </mapper>

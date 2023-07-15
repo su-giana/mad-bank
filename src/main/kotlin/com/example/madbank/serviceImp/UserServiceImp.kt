@@ -1,10 +1,13 @@
 package com.example.madbank.serviceImp
 
+import com.example.madbank.mapper.AccountMapper
 import com.example.madbank.mapper.UserMapper
 import com.example.madbank.model.User
 import com.example.madbank.service.UserService
+import com.example.madbank.user_exception.BankAccountNotExist
 import com.example.madbank.user_exception.NotExistingUserException
 import com.example.madbank.user_exception.PasswordNotMatchesException
+import net.bytebuddy.pool.TypePool.Empty
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
@@ -17,6 +20,9 @@ import org.springframework.stereotype.Service
 
 @Service
 class UserServiceImp :UserService{
+    @Autowired
+    private lateinit var accountMapper: AccountMapper
+
     @Autowired
     lateinit var userMapper: UserMapper
 
@@ -96,7 +102,18 @@ class UserServiceImp :UserService{
     }
 
     override fun getBalanceByuserId(id: Long): Long {
-        return userMapper.getBalanceByuserId(id)
+        try{
+            if (accountMapper.isAccountAlreadyExist(id)==0.toLong()) {
+                throw BankAccountNotExist("User doen't have account!") //만들어보앗다.
+            }else{
+                return userMapper.getBalanceByuserId(id)
+            }
+        }catch(e:Exception){
+            throw e
+        }
+
     }
+
+
 
 }
