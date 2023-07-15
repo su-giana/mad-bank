@@ -12,4 +12,6 @@ interface AccountMapper {
 
     public fun getLastAccountNumber():Long
     public fun getAccountByUid(id:Long):List<Account>
+
+    public fun getBalanceByAccountId(id:Long) :Account
 }

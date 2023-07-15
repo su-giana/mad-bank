@@ -60,25 +60,4 @@ class TransactionController {
         }
     }
 
-    @GetMapping("/get_balance")
-    public fun getBalance(@RequestHeader("Authorization") token:String): ResponseEntity<String>
-    {
-        try{  //만약 없는 유저의 아이디를 검색하면 일단 오류가 남. ㅜㅜ
-            if(!jwtTokenUtil.validateToken(token)) throw NotValidTokenException("token is not valid")
-
-            var id:Long = jwtTokenUtil.extractUserId(token)
-
-                if(userService.isUserAlreadyExist(id)!=null){
-                var balance:Long = userService.getBalanceByuserId(id)
-                var value:String = balance.toString()
-                return ResponseEntity.ok(value) // string -> html.//header body로 날리려면 http 통신을 위해서는  무조건 response 써야 함.
-            }else{
-                return ResponseEntity.ok("error occured from JIYEON haha")
-            }
-
-        }catch (e:Exception)
-        {
-            throw e
-        }
-    }
 }

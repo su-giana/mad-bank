@@ -29,4 +29,10 @@
         FROM account
         WHERE user_id = #{id}
     </select>
+
+    <select id="getBalanceByAccountId">
+        SELECT *
+        FROM account
+        WHERE id = #{id}
+    </select>
 </mapper>

@@ -9,7 +9,7 @@ import javax.persistence.Id
 
 @Entity
 @Data
-class Account (
+data class Account (
     @Id
     @GeneratedValue
     public var accountId: Long,
