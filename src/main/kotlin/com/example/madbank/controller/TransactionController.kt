@@ -9,11 +9,7 @@ import com.example.madbank.user_exception.NotValidTokenException
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestHeader
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.ResponseBody
+import org.springframework.web.bind.annotation.*
 
 @Controller
 class TransactionController {
@@ -26,7 +22,7 @@ class TransactionController {
     @Autowired
     lateinit var jwtTokenUtil: JwtTokenUtil
 
-    @GetMapping("/transfer_money")
+    @PostMapping("/transfer_money")
     public fun transferMoney(
             @RequestBody transferForm: TransferForm
     ): ResponseEntity<String>
@@ -37,7 +33,7 @@ class TransactionController {
         //4. receiverId의 금액 추가 =>addReceiverBalance, UpdateUser
         //5. resultCode를 'Success'로 설정한다.
 
-        val transactionType:Long = transferForm.transactionType
+        val transactionType:String = transferForm.transactionType
         val senderId:Long = transferForm.senderId
         val receiverId:Long = transferForm.receiverId
         val cost = transferForm.cost
@@ -48,7 +44,7 @@ class TransactionController {
                 if(transactionService.isBalanceEnough(senderId, cost)){
                     transactionService.deductSenderBalance(senderId, cost)
                     transactionService.addReceiverBalance(receiverId, cost)
-                    transactionService.admitTransfercode(transactionType)
+                    // transactionService.admitTransfercode(transactionType)
                     return ResponseEntity.ok("SUCCEED")
                 }else{
                     return ResponseEntity.ok("FAILED")

@@ -6,6 +6,7 @@ import com.example.madbank.model.User
 import com.example.madbank.service.UserService
 import com.example.madbank.user_exception.BankAccountNotExist
 import com.example.madbank.user_exception.NotExistingUserException
+import com.example.madbank.user_exception.NotValidTokenException
 import com.example.madbank.user_exception.PasswordNotMatchesException
 import net.bytebuddy.pool.TypePool.Empty
 import org.springframework.beans.factory.annotation.Autowired
@@ -48,41 +49,23 @@ class UserServiceImp :UserService{
     }
 
     override fun insertUser(user: User) {
-        try {
             if(!user.name.equals("") && !user.phone.equals("") && !user.nationalId.equals(""))
             {
                 user.password = passwordEncoder.encode(user.password)
                 userMapper.insertUser(user)
             }
-
-        }
-        catch (e:Exception)
-        {
-            throw e
-        }
     }
 
     override fun updateUser(user: User) {
-        try {
             userMapper.updateUser(user)
-        }
-        catch(e:Exception)
-        {
-            throw e
-        }
     }
 
     override fun deleteUser(id:Long) {
-        try {
             userMapper.deleteUser(id)
-        }
-        catch (e:Exception)
-        {
-            throw e
-        }
     }
 
     override fun login(id: String, password: String):Authentication {
+
         val user:User = userMapper.getUserBySignUpId(id)
 
         if(user==null)
@@ -102,18 +85,13 @@ class UserServiceImp :UserService{
     }
 
     override fun getBalanceByuserId(id: Long): Long {
-        try{
             if (accountMapper.isAccountAlreadyExist(id)==0.toLong()) {
                 throw BankAccountNotExist("User doen't have account!") //만들어보앗다.
             }else{
                 return userMapper.getBalanceByuserId(id)
             }
-        }catch(e:Exception){
-            throw e
-        }
+
 
     }
-
-
 
 }

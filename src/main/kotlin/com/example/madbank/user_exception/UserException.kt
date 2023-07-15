@@ -4,17 +4,16 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
-import javax.security.auth.login.AccountNotFoundException
 
-class NotExistingUserException(message : String) : Exception(message) {}
+class NotExistingUserException(message : String) : RuntimeException(message) {}
 
-class PasswordNotMatchesException(message : String) : Exception(message) {}
+class PasswordNotMatchesException(message : String) : RuntimeException(message) {}
 
-class NotValidTokenException(message:String):Exception(message){}
+class NotValidTokenException(message:String):RuntimeException(message){}
 
-class AlreadyRegisteredException(message:String):Exception(message){}
+class AlreadyRegisteredException(message:String):RuntimeException(message){}
 
-class BankAccountNotExist(message: String):Exception(message){}
+class BankAccountNotExist(message: String):RuntimeException(message){}
 
 @ControllerAdvice
 class GlobalExceptionHandler {
@@ -33,7 +32,7 @@ class GlobalExceptionHandler {
 
     @ExceptionHandler(NotValidTokenException::class)
     fun handleNotValidTokenException(ex: NotValidTokenException): ResponseEntity<String> {
-        ex.printStackTrace()
+        print("Exception occurred because of : ${ex.message}")
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.message)
     }
 
@@ -45,13 +44,15 @@ class GlobalExceptionHandler {
 
     @ExceptionHandler(BankAccountNotExist::class)
     fun handleBankAccountNotExist(ex: BankAccountNotExist):ResponseEntity<String>{
+        ex.printStackTrace()
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.message)
     }
 
     @ExceptionHandler(Exception::class)
-    fun handleException(ex: Exception): ResponseEntity<String> {
+    fun handlerException(ex: Exception):ResponseEntity<String>
+    {
         ex.printStackTrace()
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred")
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unhandled Exception occurred")
     }
 
 }
