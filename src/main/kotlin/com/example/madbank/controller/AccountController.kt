@@ -1,11 +1,16 @@
 package com.example.madbank.controller
 
+import com.example.madbank.model.Account
+import com.example.madbank.security.JwtTokenUtil
 import org.springframework.beans.factory.annotation.Autowired
 import com.example.madbank.service.AccountService
 import com.example.madbank.service.UserService
+import com.example.madbank.user_exception.NotValidTokenException
+import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestParam
 
 @Controller
@@ -15,6 +20,11 @@ class AccountController {
 //
     @Autowired
     lateinit var userService: UserService
+
+    @Autowired
+    lateinit var jwtTokenUtil: JwtTokenUtil
+
+    var objectMapper:ObjectMapper = ObjectMapper()
 
     @GetMapping("/create_account")
     public fun createAccount(
@@ -29,8 +39,25 @@ class AccountController {
             }
         }catch(e:Exception)
         {
-            throw e
+            return ResponseEntity.badRequest().body(e.message)
         }
     }
 
+    @GetMapping("/account_list")
+    public fun getAccountList(@RequestHeader("Authorization") token:String):ResponseEntity<String>
+    {
+        try {
+            if(!jwtTokenUtil.validateToken(token))  throw NotValidTokenException("token is not valid, cannot get account list")
+
+            var id:Long = jwtTokenUtil.extractUserId(token)
+
+            var accounts:List<Account> = accountService.getAccountListByUid(id)
+            var json:String = objectMapper.writeValueAsString(accounts)
+            return ResponseEntity.ok(json)
+        }
+        catch (e:Exception)
+        {
+            return ResponseEntity.badRequest().body(e.message)
+        }
+    }
 }

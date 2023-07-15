@@ -9,18 +9,24 @@
 
     <select id="isAccountAlreadyExist">
         SELECT ifnull(max(user_id),0) user_id
-        From account
+        FROM account
         WHERE user_id=#{userId}
     </select>
 
     <select id="getAccountNumberByuserId">
         SELECT ifnull(max(account_number),0) account_number
-        From account
+        FROM account
         WHERE user_id=#{userId}
     </select>
 
     <select id="getLastAccountNumber">
         SELECT MAX(account_number)
-        From account;
+        FROM account;
+    </select>
+
+    <select id="getAccountByUid">
+        SELECT *
+        FROM account
+        WHERE user_id = #{id}
     </select>
 </mapper>

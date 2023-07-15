@@ -1,5 +1,6 @@
 package com.example.madbank.mapper
 
+import com.example.madbank.model.Account
 import org.apache.ibatis.annotations.Mapper
 
 @Mapper
@@ -10,4 +11,5 @@ interface AccountMapper {
     public fun createAccount(userId:Long, accountNumber: Long)
 
     public fun getLastAccountNumber():Long
+    public fun getAccountByUid(id:Long):List<Account>
 }
