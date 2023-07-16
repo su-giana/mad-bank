@@ -5,6 +5,7 @@ import com.example.madbank.security.JwtTokenUtil
 import org.springframework.beans.factory.annotation.Autowired
 import com.example.madbank.service.AccountService
 import com.example.madbank.service.UserService
+import com.example.madbank.user_exception.NotExistingUserException
 import com.example.madbank.user_exception.NotValidTokenException
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.http.ResponseEntity
@@ -28,19 +29,18 @@ class AccountController {
 
     @GetMapping("/create_account")
     public fun createAccount(
-            @RequestParam(value="userId", required = true) userId:Long
+            @RequestHeader("Authorization") token:String
     ): ResponseEntity<String> {
-        try{
+            if(!jwtTokenUtil.validateToken(token.substring(7))) throw NotValidTokenException("Not valid Token, could not create account")
+
+            var userId:Long = jwtTokenUtil.extractUserId(token.substring(7))
+
             if(userService.isUserAlreadyExist(userId)){
                 accountService.createAccount(userId)
                 return ResponseEntity.ok("Create $userId's Account Success") // string -> html.//header body로 날리려면 http 통신을 위해서는  무조건 response 써야 함.
             }else{
-                return ResponseEntity.ok("error occured from JIYEON haha")
+                throw NotExistingUserException("User not exist, cannot create new account")
             }
-        }catch(e:Exception)
-        {
-            return ResponseEntity.badRequest().body(e.message)
-        }
     }
 
     @GetMapping("/account_list")

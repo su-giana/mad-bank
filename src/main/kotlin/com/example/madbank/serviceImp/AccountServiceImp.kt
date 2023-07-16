@@ -13,7 +13,7 @@ class AccountServiceImp:AccountService {
     lateinit var accountMapper: AccountMapper
 
     override fun createAccount(userId: Long) {
-        var newAccountNumber = accountMapper.getLastAccountNumber() + 1
+        var newAccountNumber:Long = accountMapper.getLastAccountNumber() + 1
         accountMapper.createAccount(userId, newAccountNumber)
     }
 

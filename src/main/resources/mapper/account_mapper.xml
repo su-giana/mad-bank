@@ -11,7 +11,7 @@
 
     <insert id="createAccount">
         INSERT INTO account (user_id, account_number, balance)
-        VALUES (#{userId}, #{accountNumber}, #{balance})
+        VALUES (#{userId}, #{accountNumber}, 0)
     </insert>
 
     <select id="isAccountAlreadyExist">
