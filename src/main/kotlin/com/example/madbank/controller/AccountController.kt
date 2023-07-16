@@ -62,13 +62,17 @@ class AccountController {
     }
 
     @GetMapping("/get_balance")
-    public fun getBalance(@RequestParam(value = "account_id", required = true) id:Long): ResponseEntity<String>
+    public fun getBalance(@RequestParam(value = "account_id", required = true) accountId:Long): ResponseEntity<String>
     {
         try{  //만약 없는 유저의 아이디를 검색하면 일단 오류가 남. ㅜㅜ
-
-            var balance:Long = accountService.getBalanceByAccountId(id).balance
-            var value:String = balance.toString()
-            return ResponseEntity.ok(value) // string -> html.//header body로 날리려면 http 통신을 위해서는  무조건 response 써야 함.
+            if(accountService.isAccountAlreadyExist(accountId)){
+                val balance: Long = accountService.getBalanceByAccountId(accountId)
+                return ResponseEntity.ok(balance.toString())
+            }
+            return ResponseEntity.badRequest().body("user account doesn't exist")
+//            var balance:Long = accountService.getBalanceByAccountId(id).balance
+//            var value:String = balance.toString()
+//            return ResponseEntity.ok(value) // string -> html.//header body로 날리려면 http 통신을 위해서는  무조건 response 써야 함.
 
         }catch (e:Exception)
         {

@@ -15,9 +15,10 @@
     </insert>
 
     <select id="isAccountAlreadyExist">
-        SELECT ifnull(max(user_id),0) user_id
+--         SELECT ifnull(max(user_id),0) user_id
+        SELECT account_id
         FROM account
-        WHERE user_id=#{userId}
+        WHERE account_id=#{account_id}
     </select>
 
     <select id="getAccountNumberByuserId">
@@ -38,14 +39,14 @@
     </select>
 
     <select id="getBalanceByAccountId" resultMap="AccountResultMap">
-        SELECT *
+        SELECT balance
         FROM account
-        WHERE id = #{id}
+        WHERE account_id = #{account_id}
     </select>
 
     <select id="getUserIdByAccountId" resultType="Long">
         SELECT user_id
         FROM account
-        WHERE id = #{id}
+        WHERE account_id = #{account_id}
     </select>
 </mapper>

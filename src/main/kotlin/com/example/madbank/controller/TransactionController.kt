@@ -23,6 +23,9 @@ class TransactionController {
     lateinit var userService: UserService
 
     @Autowired
+    lateinit var accountService: AccountService
+
+    @Autowired
     lateinit var jwtTokenUtil: JwtTokenUtil
 
     @PostMapping("/transfer_money")
@@ -30,31 +33,73 @@ class TransactionController {
             @RequestBody transferForm: TransferForm
     ): ResponseEntity<String>
     {
-        //1. senderId와 receiverId가 모두 DB에 존재하는지 확인한다. => userService.isUserAlreadyExist
-        //2. senderId로 getBalance해서, cost보다 getBalance가 많은지 확인한다. (잔액>송금액) =>userService.isBalanceEnough
-        //3, senderId의 금액 차감 =>deductSenderBalance, UpdateUser
-        //4. receiverId의 금액 추가 =>addReceiverBalance, UpdateUser
-        //5. resultCode를 'Success'로 설정한다.
-
+        val transactionId:Long = transferForm.transactionId
         val transactionType:String = transferForm.transactionType
-        val senderId:Long = transferForm.senderId
-        val receiverId:Long = transferForm.receiverId
+        val senderAccountId:Long = transferForm.senderAccountId
+        val receiverAccountId:Long = transferForm.receiverAccountId
         val cost = transferForm.cost
 
         try {
-
-            if(userService.isUserAlreadyExist(senderId)&&userService.isUserAlreadyExist(receiverId)){
-                if(transactionService.isBalanceEnough(senderId, cost)){
-                    transactionService.deductSenderBalance(senderId, cost)
-                    transactionService.addReceiverBalance(receiverId, cost)
+            if(accountService.isAccountAlreadyExist(senderAccountId)&&accountService.isAccountAlreadyExist(receiverAccountId)){
+                if(transactionService.isBalanceEnough(senderAccountId, cost) && (transactionType == "Transfer")){
+                    val senderResult = transactionService.deductSenderBalance(senderAccountId, cost)
+                    val receiverResult = transactionService.addReceiverBalance(receiverAccountId, cost)
                     // transactionService.admitTransfercode(transactionType)
-                    return ResponseEntity.ok("SUCCEED")
-                }else{
-                    return ResponseEntity.ok("FAILED")
+                    if(senderResult && receiverResult){ // 둘다 잘 됨.
+                        transactionService.admitTransfercode(transactionId)
+                        return ResponseEntity.ok("SUCCEED")
+                    }else if(senderResult){  //송금자 돈이 빠져나가기만 한 경우
+                        val recover = transactionService.deposit(senderAccountId, cost)//근데 이게 실패하면 어떡해 ? ㅋㅋㅋㅋ
+                        //만약 recover 도 잘 되었는지 테스트 하려면 아래 코드를 쓰면 됨. - 참고로 아래 receiverResult에도 추가해줘야 함.
+//                        if(recover){
+//                            return ResponseEntity.ok("sender Result FAILED but Recovered before state")
+//                        }else{
+//                            return ResponseEntity.ok("sender Result FAILED and Can't Recovered before state")
+//                        }
+                        return ResponseEntity.ok("sender Result FAILED")
+                    }else if(receiverResult){
+                        val recover = transactionService.withdrawal(receiverAccountId, cost)
+                        return ResponseEntity.ok("receiver Result FAILED")
+                    }
                 }
-            }else{
-                return ResponseEntity.badRequest().body("User doesn't exist in DB haha from.\uD83D\uDC7B Jiyeon")
+                return ResponseEntity.ok("FAILED: No Enough Money or Not Transfer type")
             }
+            return ResponseEntity.badRequest().body("User doesn't exist in DB haha from.\uD83D\uDC7B Jiyeon")
+
+        }catch (e:Exception)
+        {
+            return ResponseEntity.badRequest().body("Cannot transfer money")
+        }
+    }
+
+    @PostMapping("/my_transfer")
+    public fun myTransfer(
+            @RequestBody transferForm: TransferForm
+    ): ResponseEntity<String>
+    {
+        val transactionId:Long = transferForm.transactionId
+        val transactionType:String = transferForm.transactionType
+        val senderAccountId:Long = transferForm.senderAccountId
+        val receiverAccountId:Long = transferForm.receiverAccountId
+        val cost = transferForm.cost
+
+        try {
+            if(senderAccountId==receiverAccountId){
+                if (accountService.isAccountAlreadyExist(senderAccountId)) {
+                    if (transactionType == "Transfer") {
+                        val recover = transactionService.deposit(senderAccountId, cost)
+                        transactionService.admitTransfercode(transactionId)
+                        return ResponseEntity.ok("SUCCEED")
+                    }else if((transactionType =="Withdrawal")&&transactionService.isBalanceEnough(senderAccountId, cost)){
+                        val recover = transactionService.withdrawal(senderAccountId, cost)
+                        transactionService.admitTransfercode(transactionId)
+                        return ResponseEntity.ok("SUCCEED")
+                    }
+                    return ResponseEntity.ok("FAILED: No Enough Money or Not proper type")
+                }
+            }
+            return ResponseEntity.badRequest().body("User doesn't exist in DB haha from.\uD83D\uDC7B Jiyeon")
+
         }catch (e:Exception)
         {
             return ResponseEntity.badRequest().body("Cannot transfer money")
