@@ -5,7 +5,7 @@ import org.apache.ibatis.annotations.Mapper
 
 @Mapper
 interface AccountMapper {
-    public fun isAccountAlreadyExist(userId:Long):Long //없으면 0 반환, 있으면 1 userId 반환.
+    public fun isAccountAlreadyExist(account_id:Long):Long //없으면 0 반환, 있으면 1 userId 반환.
 
     public fun getAccountNumberByuserId(userId: Long):Long
     public fun createAccount(userId:Long, accountNumber: Long)
@@ -13,7 +13,7 @@ interface AccountMapper {
     public fun getLastAccountNumber():Long
     public fun getAccountByUid(id:Long):List<Account>
 
-    public fun getBalanceByAccountId(id:Long) :Account
+    public fun getBalanceByAccountId(account_id:Long):Long
 
-    public fun getUserIdByAccountId(id:Long):Long
+    public fun getUserIdByAccountId(account_id:Long):Long
 }

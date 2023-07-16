@@ -21,16 +21,17 @@ class AccountServiceImp:AccountService {
         return accountMapper.getAccountByUid(id)
     }
 
-    override fun getBalanceByAccountId(id: Long): Account {
-        return accountMapper.getBalanceByAccountId(id)
+    override fun getBalanceByAccountId(account_id: Long): Long {
+        return accountMapper.getBalanceByAccountId(account_id)
     }
 
-    override fun getUserIdByAccountId(id: Long): Long {
-        return accountMapper.getUserIdByAccountId(id)
+    override fun getUserIdByAccountId(account_id: Long): Long {
+        return accountMapper.getUserIdByAccountId(account_id)
     }
 
-    override fun isAccountAlreadyExist(userId: Long): Long {
-        return isAccountAlreadyExist(userId)
+    override fun isAccountAlreadyExist(account_id: Long): Boolean {
+        if(accountMapper.isAccountAlreadyExist(account_id)==null) return false
+        return true
     }
 
 }

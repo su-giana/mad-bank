@@ -1,5 +1,6 @@
 package com.example.madbank.serviceImp
 
+import com.example.madbank.mapper.AccountMapper
 import com.example.madbank.mapper.TransactionMapper
 import com.example.madbank.mapper.UserMapper
 import com.example.madbank.model.Transaction
@@ -16,6 +17,9 @@ class TransactionServiceImp:TransactionService {
 
     @Autowired
     lateinit var transactionMapper: TransactionMapper
+
+    @Autowired
+    lateinit var accountMapper: AccountMapper
 //    fun sendMoney(cost:Long)
 //    {
 //
@@ -34,35 +38,47 @@ class TransactionServiceImp:TransactionService {
         return false
     }
 
-    override fun deductSenderBalance(id: Long, cost: Long) {
+    override fun deductSenderBalance(senderAccountId: Long, cost: Long) : Boolean{
         //transfer인 경우에만 이용. sender의 balance에서 cost 만큼 차감한 값을 반환.
-        var balance = userMapper.getBalanceByuserId(id)
+        var balance = userMapper.getBalanceByuserId(senderAccountId)
         val result = balance - cost
-        transactionMapper.updateBalance(id, result)
+        transactionMapper.updateBalance(senderAccountId, result)
+        if(result == accountMapper.getBalanceByAccountId(senderAccountId)){
+            return true
+        }
+        return false
     }
 
-    override fun addReceiverBalance(id: Long, cost: Long) {
+    override fun addReceiverBalance(receiverAccountId: Long, cost: Long): Boolean {
         //transfer인 경우에만 이용. receiver의 balance에서 cost 만큼 더하여 업데이트함.
-        val balance = userMapper.getBalanceByuserId(id)
+        val balance = userMapper.getBalanceByuserId(receiverAccountId)
         val result = balance + cost
-        transactionMapper.updateBalance(id, result)
+        transactionMapper.updateBalance(receiverAccountId, result)
+        if(result == accountMapper.getBalanceByAccountId(receiverAccountId)){
+            return true
+        }
+        return false
+    }
+
+
+
+    override fun withdrawal(userId: Long, cost: Long): Boolean {
+        val balance = userMapper.getBalanceByuserId(userId)
+        val result = balance - cost
+        transactionMapper.updateBalance(userId, result)
+        return true //일단 무조건 성공한 걸로 하자
+    }
+
+    override fun deposit(userId: Long, cost: Long) : Boolean{
+        val balance = userMapper.getBalanceByuserId(userId)
+        val result = balance + cost
+        transactionMapper.updateBalance(userId, result)
+        return true //일단 무조건 성공한 걸로 하자
     }
 
     override fun admitTransfercode(transactionId: Long) {
         //잘 되었다는 의미로 Failed에서 Success로 변경
         transactionMapper.changeResultcode(transactionId)
-    }
-
-    override fun withdrawal(userId: Long, cost: Long, transactionType: String) {
-        val balance = userMapper.getBalanceByuserId(userId)
-        val result = balance - cost
-        transactionMapper.updateBalance(userId, result)
-    }
-
-    override fun deposit(userId: Long, cost: Long, transactionType: String) {
-        val balance = userMapper.getBalanceByuserId(userId)
-        val result = balance + cost
-        transactionMapper.updateBalance(userId, result)
     }
 
     override fun getAllTransactionWithAccountId(accountId:Long):List<Transaction>

@@ -8,8 +8,8 @@ interface AccountService {
 
     public fun getUserIdByAccountId(id:Long):Long
 
-    public fun isAccountAlreadyExist(userId:Long):Long
+    public fun isAccountAlreadyExist(userId:Long):Boolean
     public fun createAccount(userId: Long)
     public fun getAccountListByUid(id:Long):List<Account>
-    public fun getBalanceByAccountId(id:Long):Account
+    public fun getBalanceByAccountId(id:Long):Long
 }

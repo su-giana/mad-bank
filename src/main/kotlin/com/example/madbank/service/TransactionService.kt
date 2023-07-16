@@ -9,11 +9,11 @@ interface TransactionService {
 
     public fun isBalanceEnough(id:Long, cost:Long): Boolean
 
-    public fun deductSenderBalance(id: Long, cost: Long)
+    public fun deductSenderBalance(senderAccountId: Long, cost: Long): Boolean
 
-    public fun addReceiverBalance(id: Long, cost: Long)
-    public fun withdrawal(userId:Long, cost:Long, transactionType: String)
-    public fun deposit(userId:Long, cost:Long, transactionType: String)
+    public fun addReceiverBalance(id: Long, cost: Long): Boolean
+    public fun withdrawal(userId:Long, cost:Long): Boolean
+    public fun deposit(userId:Long, cost:Long): Boolean
 
     public fun admitTransfercode(transactionId:Long)
 
