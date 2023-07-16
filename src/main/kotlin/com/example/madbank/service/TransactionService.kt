@@ -16,4 +16,6 @@ interface TransactionService {
     public fun deposit(userId:Long, cost:Long, transactionType: String)
 
     public fun admitTransfercode(transactionId:Long)
+
+    public fun getAllTransactionWithAccountId(accountId:Long):List<Transaction>
 }

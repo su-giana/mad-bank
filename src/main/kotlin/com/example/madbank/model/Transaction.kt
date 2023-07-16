@@ -14,20 +14,20 @@ class Transaction (
     public var transactionId:Long,
 
     // account
-    @Column
+    @Column(name = "sender_id")
     public var senderId:Long,
 
     //account
-    @Column
+    @Column(name = "receiver_id")
     public var receiverId:Long,
 
-    @Column
+    @Column(name = "transaction_type")
     public var transactionType: String,
 
-    @Column
+    @Column(name = "cost")
     public var cost:Long,
 
-    @Column
+    @Column(name = "result_code")
     public var resultCode:String,
 
 )

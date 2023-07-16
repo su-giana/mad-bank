@@ -1,6 +1,7 @@
 package com.example.madbank.mapper
 
 import com.example.madbank.model.Account
+import com.example.madbank.model.Transaction
 import org.apache.ibatis.annotations.Mapper
 
 @Mapper
@@ -13,5 +14,7 @@ interface TransactionMapper {
     public fun updateBalance(userId:Long, balance:Long)
 
     public fun changeResultcode(transactionId: Long)
+
+    public fun getAllTransactionWithAccountId(accountId:Long):List<Transaction>
 
 }

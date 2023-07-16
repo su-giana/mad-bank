@@ -47,9 +47,9 @@ class AccountController {
     public fun getAccountList(@RequestHeader("Authorization") token:String):ResponseEntity<String>
     {
         try {
-            if(!jwtTokenUtil.validateToken(token))  throw NotValidTokenException("token is not valid, cannot get account list")
+            if(!jwtTokenUtil.validateToken(token.substring(7)))  throw NotValidTokenException("token is not valid, cannot get account list")
 
-            var id:Long = jwtTokenUtil.extractUserId(token)
+            var id:Long = jwtTokenUtil.extractUserId(token.substring(7))
 
             var accounts:List<Account> = accountService.getAccountListByUid(id)
             var json:String = objectMapper.writeValueAsString(accounts)

@@ -46,9 +46,9 @@ class JwtTokenUtil {
         }
     }
 
-    public fun isExpired(token:String, secretKey:String): Boolean
+    public fun isExpired(token:String): Boolean
     {
-        return Jwts.parser().setSigningKey(secretKey.toByteArray()).parseClaimsJws(token)
+        return Jwts.parser().setSigningKey(jwtSecret.toByteArray()).parseClaimsJws(token)
                 .body.expiration.before(Date())
     }
 

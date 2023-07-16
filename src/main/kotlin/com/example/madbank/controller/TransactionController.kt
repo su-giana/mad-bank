@@ -1,11 +1,14 @@
 package com.example.madbank.controller
 
+import com.example.madbank.model.Transaction
 import com.example.madbank.model.TransferForm
 import com.example.madbank.model.User
 import com.example.madbank.security.JwtTokenUtil
+import com.example.madbank.service.AccountService
 import com.example.madbank.service.TransactionService
 import com.example.madbank.service.UserService
 import com.example.madbank.user_exception.NotValidTokenException
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
@@ -56,6 +59,16 @@ class TransactionController {
         {
             return ResponseEntity.badRequest().body("Cannot transfer money")
         }
+    }
+
+    @GetMapping("/consume_list")
+    public fun getTransactionList(@RequestHeader("Authorization") token:String, @RequestParam(value = "account", required = true) account:Long):ResponseEntity<String>
+    {
+        if(!jwtTokenUtil.validateToken(token.substring(7))) throw NotValidTokenException("not valid token, cannot access to transaction list")
+
+        var transactions: List<Transaction> = transactionService.getAllTransactionWithAccountId(account)
+        var json:String = jacksonObjectMapper().writeValueAsString(transactions)
+        return ResponseEntity.ok(json)
     }
 
 }

@@ -2,6 +2,7 @@ package com.example.madbank.serviceImp
 
 import com.example.madbank.mapper.TransactionMapper
 import com.example.madbank.mapper.UserMapper
+import com.example.madbank.model.Transaction
 import com.example.madbank.service.TransactionService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.jpa.domain.AbstractPersistable_.id
@@ -12,6 +13,8 @@ class TransactionServiceImp:TransactionService {
 
     @Autowired
     lateinit var userMapper: UserMapper
+
+    @Autowired
     lateinit var transactionMapper: TransactionMapper
 //    fun sendMoney(cost:Long)
 //    {
@@ -60,5 +63,10 @@ class TransactionServiceImp:TransactionService {
         val balance = userMapper.getBalanceByuserId(userId)
         val result = balance + cost
         transactionMapper.updateBalance(userId, result)
+    }
+
+    override fun getAllTransactionWithAccountId(accountId:Long):List<Transaction>
+    {
+        return transactionMapper.getAllTransactionWithAccountId(accountId)
     }
 }

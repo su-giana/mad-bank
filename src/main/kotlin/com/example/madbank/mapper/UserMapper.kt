@@ -18,4 +18,5 @@ interface UserMapper {
     public fun deleteUser(id:Long)
 
     public fun getBalanceByuserId(userId:Long):Long
+
 }
