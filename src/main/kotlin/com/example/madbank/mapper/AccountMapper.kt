@@ -16,4 +16,8 @@ interface AccountMapper {
     public fun getBalanceByAccountId(account_id:Long):Long
 
     public fun getUserIdByAccountId(account_id:Long):Long
+
+    public fun getAccountIdByAccountNumber(account:String):Long
+
+    public fun isAccountNumberAlreadyExist(account:String):Account
 }

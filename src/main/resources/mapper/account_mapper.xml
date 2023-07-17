@@ -21,6 +21,13 @@
         WHERE account_id=#{account_id}
     </select>
 
+    <select id="isAccountNumberAlreadyExist" resultMap="AccountResultMap">
+        --         SELECT ifnull(max(user_id),0) user_id
+        SELECT account_id
+        FROM account
+        WHERE account_number=#{account_id}
+    </select>
+
     <select id="getAccountNumberByuserId">
         SELECT ifnull(max(account_number),0) account_number
         FROM account
@@ -48,5 +55,11 @@
         SELECT user_id
         FROM account
         WHERE account_id = #{account_id}
+    </select>
+
+    <select id="getAccountIdByAccountNumber" resultType="Long">
+        SELECT account_id
+        FROM account
+        WHERE account_number = #{account}
     </select>
 </mapper>

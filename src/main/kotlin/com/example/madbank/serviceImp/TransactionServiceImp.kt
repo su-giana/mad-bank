@@ -21,7 +21,7 @@ class TransactionServiceImp:TransactionService {
     @Autowired
     lateinit var accountMapper: AccountMapper
     override fun isBalanceEnough(id: Long, cost: Long): Boolean {
-        val balance = userMapper.getBalanceByuserId(id)
+        val balance = accountMapper.getBalanceByAccountId(id)
         if (balance > cost) {
             return true
         }

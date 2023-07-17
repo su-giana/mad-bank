@@ -14,7 +14,11 @@ class AccountServiceImp:AccountService {
     lateinit var accountMapper: AccountMapper
 
     override fun createAccount(userId: Long) {
-        var newAccountNumber:String = "7282618" + Random.nextInt(100000, 1000000);
+        lateinit var newAccountNumber:String
+        do {
+            newAccountNumber = "7282618" + Random.nextInt(100000, 1000000);
+        }while(accountMapper.isAccountNumberAlreadyExist(newAccountNumber) != null)
+
         accountMapper.createAccount(userId, newAccountNumber)
     }
 
@@ -24,6 +28,10 @@ class AccountServiceImp:AccountService {
 
     override fun getBalanceByAccountId(account_id: Long): Long {
         return accountMapper.getBalanceByAccountId(account_id)
+    }
+
+    override fun getAccountIdByAccountNumber(account: String): Long {
+        return accountMapper.getAccountIdByAccountNumber(account)
     }
 
     override fun getUserIdByAccountId(account_id: Long): Long {

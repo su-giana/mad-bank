@@ -32,8 +32,10 @@ class TransactionController {
     {
         val transactionType:String = transferForm.transactionType
         val senderAccountId:Long = transferForm.senderAccountId
-        val receiverAccountId:Long = transferForm.receiverAccountId
+        val receiverAccountNumber:String = transferForm.receiverAccountNumber
         val cost = transferForm.cost
+
+        var receiverAccountId:Long = accountService.getAccountIdByAccountNumber(receiverAccountNumber)
 
         try {
             if(accountService.isAccountAlreadyExist(senderAccountId)&&accountService.isAccountAlreadyExist(receiverAccountId)){
@@ -83,8 +85,10 @@ class TransactionController {
     {
         val transactionType:String = transferForm.transactionType
         val senderAccountId:Long = transferForm.senderAccountId
-        val receiverAccountId:Long = transferForm.receiverAccountId
+        val receiverAccountNumber:String = transferForm.receiverAccountNumber
         val cost = transferForm.cost
+
+        var receiverAccountId:Long = accountService.getAccountIdByAccountNumber(receiverAccountNumber)
 
         try {
             if(senderAccountId==receiverAccountId){

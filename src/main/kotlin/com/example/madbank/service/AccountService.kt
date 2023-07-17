@@ -12,4 +12,6 @@ interface AccountService {
     public fun createAccount(userId: Long)
     public fun getAccountListByUid(id:Long):List<Account>
     public fun getBalanceByAccountId(id:Long):Long
+
+    public fun getAccountIdByAccountNumber(account:String):Long
 }
