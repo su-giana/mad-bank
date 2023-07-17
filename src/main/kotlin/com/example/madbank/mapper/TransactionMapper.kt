@@ -10,7 +10,7 @@ interface TransactionMapper {
 
 //    public fun getAccountByaccountId(accountId:Long): Account
 
-
+    public fun insertTransaction(item:Transaction)
     public fun updateBalance(userId:Long, balance:Long)
 
     public fun changeResultcode(transactionId: Long)

@@ -12,7 +12,11 @@ interface TransactionService {
     public fun deductSenderBalance(senderAccountId: Long, cost: Long): Boolean
 
     public fun addReceiverBalance(id: Long, cost: Long): Boolean
+
+    public fun insertTransaction(item:Transaction):Boolean
+
     public fun withdrawal(userId:Long, cost:Long): Boolean
+
     public fun deposit(userId:Long, cost:Long): Boolean
 
     public fun admitTransfercode(transactionId:Long)

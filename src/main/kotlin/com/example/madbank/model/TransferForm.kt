@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.RequestParam
 @Data
 @AllArgsConstructor
 data class TransferForm (
-        val transactionId: Long,
         val transactionType:String,
         val senderAccountId:Long,
         val receiverAccountId:Long,

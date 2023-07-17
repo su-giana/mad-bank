@@ -50,6 +50,20 @@ class TransactionServiceImp:TransactionService {
         return false
     }
 
+    override fun insertTransaction(item: Transaction):Boolean {
+        try {
+            transactionMapper.insertTransaction(item)
+            var transactionId:Long = item.transactionId
+            print(transactionId)
+
+            return true
+        }
+        catch (e:Exception)
+        {
+            e.printStackTrace()
+            return false
+        }
+    }
 
 
     override fun withdrawal(userId: Long, cost: Long): Boolean {
@@ -65,6 +79,8 @@ class TransactionServiceImp:TransactionService {
         transactionMapper.updateBalance(userId, result)
         return true //일단 무조건 성공한 걸로 하자
     }
+
+
 
     override fun admitTransfercode(transactionId: Long) {
         //잘 되었다는 의미로 Failed에서 Success로 변경
