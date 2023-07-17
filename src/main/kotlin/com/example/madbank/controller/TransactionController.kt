@@ -110,7 +110,7 @@ class TransactionController {
                         transactionService.admitTransfercode(transactionId)
                         return ResponseEntity.ok("SUCCEED")
                     }
-                    return ResponseEntity.ok("FAILED: No Enough Money or Not proper type")
+                    return ResponseEntity.badRequest().body("FAILED: No Enough Money or Not proper type")
                 }
             }
             return ResponseEntity.badRequest().body("User doesn't exist in DB haha from.\uD83D\uDC7B Jiyeon")

@@ -18,7 +18,7 @@ data class Account (
     public var userId:Long,
 
     @Column
-    public var accountNumber:Long,
+    public var accountNumber:String,
 
     @Column
     public var balance:Long,

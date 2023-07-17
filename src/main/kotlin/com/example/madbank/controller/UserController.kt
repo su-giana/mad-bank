@@ -51,7 +51,7 @@ class UserController {
     {
         if(!jwtTokenUtil.validateToken(token.substring(7))) throw NotValidTokenException("token not validate, cannot refer username");
 
-        if(id == null)
+        if(id == null || id.toInt() == 0)
         {
             var id:Long = jwtTokenUtil.extractUserId(token.substring(7))
             var user:User = userService.getUserById(id)

@@ -3,9 +3,9 @@
 <mapper namespace="com.example.madbank.mapper.TransactionMapper">
 
     <resultMap id="TransactionResultMap" type="Transaction">
-        <result column="id" property="transactionId"/>
-        <result column="sender_id" property="senderId"/>
-        <result column="receiver_id" property="receiverId"/>
+        <result column="transaction_id" property="transactionId"/>
+        <result column="sender_account_id" property="senderId"/>
+        <result column="receiver_account_id" property="receiverId"/>
         <result column="transaction_type" property="transactionType"/>
         <result column="cost" property="cost"/>
         <result column="result_code" property="resultCode"/>
@@ -32,7 +32,7 @@
     <select id="getAllTransactionWithAccountId" resultMap="TransactionResultMap">
         SELECT *
         FROM transaction
-        WHERE sender_account_id = #{accountId} OR receiver_account_id = #{accountId}
+        WHERE (sender_account_id = #{accountId} OR receiver_account_id = #{accountId}) AND result_code != 'Failed'
     </select>
 
 </mapper>
