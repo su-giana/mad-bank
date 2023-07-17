@@ -10,10 +10,12 @@ import com.example.madbank.user_exception.NotValidTokenException
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
+import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestParam
 
+@CrossOrigin(allowedHeaders = ["*"])
 @Controller
 class AccountController {
     @Autowired
@@ -53,6 +55,7 @@ class AccountController {
 
             var accounts:List<Account> = accountService.getAccountListByUid(id)
             var json:String = objectMapper.writeValueAsString(accounts)
+//            print(json)
             return ResponseEntity.ok(json)
         }
         catch (e:Exception)

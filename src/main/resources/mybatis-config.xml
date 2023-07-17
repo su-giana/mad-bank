@@ -9,6 +9,7 @@
         <typeAlias type="com.example.madbank.model.User" alias="User" />
         <typeAlias type="com.example.madbank.model.Account" alias="Account" />
         <typeAlias type="com.example.madbank.model.Transaction" alias="Transaction"/>
+        <typeAlias type="com.example.madbank.model.Market" alias="Market"/>
     </typeAliases>
 
     <mappers>
