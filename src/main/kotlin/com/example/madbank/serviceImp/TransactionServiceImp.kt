@@ -20,16 +20,6 @@ class TransactionServiceImp:TransactionService {
 
     @Autowired
     lateinit var accountMapper: AccountMapper
-//    fun sendMoney(cost:Long)
-//    {
-//
-//    }
-
-
-//    override fun getBalanceById(id: Long): Long {
-//        return userMapper.getBalanceById(id)
-//    }
-
     override fun isBalanceEnough(id: Long, cost: Long): Boolean {
         val balance = userMapper.getBalanceByuserId(id)
         if (balance > cost) {

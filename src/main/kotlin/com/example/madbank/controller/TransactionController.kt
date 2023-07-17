@@ -86,7 +86,7 @@ class TransactionController {
         try {
             if(senderAccountId==receiverAccountId){
                 if (accountService.isAccountAlreadyExist(senderAccountId)) {
-                    if (transactionType == "Transfer") {
+                    if (transactionType == "Deposit") {
                         val recover = transactionService.deposit(senderAccountId, cost)
                         transactionService.admitTransfercode(transactionId)
                         return ResponseEntity.ok("SUCCEED")
