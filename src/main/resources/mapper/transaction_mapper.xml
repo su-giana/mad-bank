@@ -14,7 +14,7 @@
     <update id="updateBalance">
         UPDATE account
         SET balance = #{balance}
-        WHERE user_id = #{userId}
+        WHERE account_id = #{userId}
     </update>
 
     <insert id="insertTransaction" useGeneratedKeys="true" keyProperty="transactionId">
