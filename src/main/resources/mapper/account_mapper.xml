@@ -3,7 +3,7 @@
 <mapper namespace="com.example.madbank.mapper.AccountMapper">
 
     <resultMap id="AccountResultMap" type="Account">
-        <result column="id" property="accountId" />
+        <result column="account_id" property="accountId" />
         <result column="user_id" property="userId" />
         <result column="account_number" property="accountNumber" />
         <result column="balance" property="balance" />
@@ -38,7 +38,7 @@
         WHERE user_id = #{id}
     </select>
 
-    <select id="getBalanceByAccountId" resultMap="AccountResultMap">
+    <select id="getBalanceByAccountId" resultType="Long">
         SELECT balance
         FROM account
         WHERE account_id = #{account_id}

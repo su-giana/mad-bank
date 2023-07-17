@@ -5,6 +5,7 @@ import com.example.madbank.model.Account
 import com.example.madbank.service.AccountService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import kotlin.random.Random
 
 @Service
 class AccountServiceImp:AccountService {
@@ -13,7 +14,7 @@ class AccountServiceImp:AccountService {
     lateinit var accountMapper: AccountMapper
 
     override fun createAccount(userId: Long) {
-        var newAccountNumber:Long = accountMapper.getLastAccountNumber() + 1
+        var newAccountNumber:String = "7282618" + Random.nextInt(100000, 1000000);
         accountMapper.createAccount(userId, newAccountNumber)
     }
 

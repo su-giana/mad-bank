@@ -53,7 +53,9 @@ class UserController {
 
         if(id == null)
         {
-            var username:String = userService.getUserById(jwtTokenUtil.extractUserId(token.substring(7))).name;
+            var id:Long = jwtTokenUtil.extractUserId(token.substring(7))
+            var user:User = userService.getUserById(id)
+            var username:String = user.name
 
             return ResponseEntity.ok(username)
         }

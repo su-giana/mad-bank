@@ -93,7 +93,7 @@ class TransactionController {
                         var item:Transaction = Transaction(0, senderAccountId, receiverAccountId, transactionType, cost, "Failed")
                         transactionService.insertTransaction(item)
 
-                        val recover = transactionService.deposit(senderAccountId, cost)
+                        val recover = transactionService.addReceiverBalance(senderAccountId, cost)
                         var transactionId:Long = item.transactionId
                         transactionService.admitTransfercode(transactionId)
                         return ResponseEntity.ok("SUCCEED")
@@ -101,7 +101,7 @@ class TransactionController {
                         var item:Transaction = Transaction(0, senderAccountId, receiverAccountId, transactionType, cost, "Failed")
                         transactionService.insertTransaction(item)
 
-                        val recover = transactionService.withdrawal(senderAccountId, cost)
+                        val recover = transactionService.deductSenderBalance(senderAccountId, cost)
                         var transactionId = item.transactionId
                         transactionService.admitTransfercode(transactionId)
                         return ResponseEntity.ok("SUCCEED")

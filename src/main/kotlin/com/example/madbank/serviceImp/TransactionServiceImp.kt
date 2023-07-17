@@ -30,7 +30,7 @@ class TransactionServiceImp:TransactionService {
 
     override fun deductSenderBalance(senderAccountId: Long, cost: Long) : Boolean{
         //transfer인 경우에만 이용. sender의 balance에서 cost 만큼 차감한 값을 반환.
-        var balance = userMapper.getBalanceByuserId(senderAccountId)
+        var balance = accountMapper.getBalanceByAccountId(senderAccountId)
         val result = balance - cost
         transactionMapper.updateBalance(senderAccountId, result)
         if(result == accountMapper.getBalanceByAccountId(senderAccountId)){
@@ -41,7 +41,7 @@ class TransactionServiceImp:TransactionService {
 
     override fun addReceiverBalance(receiverAccountId: Long, cost: Long): Boolean {
         //transfer인 경우에만 이용. receiver의 balance에서 cost 만큼 더하여 업데이트함.
-        val balance = userMapper.getBalanceByuserId(receiverAccountId)
+        val balance = accountMapper.getBalanceByAccountId(receiverAccountId)
         val result = balance + cost
         transactionMapper.updateBalance(receiverAccountId, result)
         if(result == accountMapper.getBalanceByAccountId(receiverAccountId)){

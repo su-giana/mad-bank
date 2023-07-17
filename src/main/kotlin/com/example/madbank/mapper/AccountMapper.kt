@@ -8,7 +8,7 @@ interface AccountMapper {
     public fun isAccountAlreadyExist(account_id:Long):Long //없으면 0 반환, 있으면 1 userId 반환.
 
     public fun getAccountNumberByuserId(userId: Long):Long
-    public fun createAccount(userId:Long, accountNumber: Long)
+    public fun createAccount(userId:Long, accountNumber: String)
 
     public fun getLastAccountNumber():Long
     public fun getAccountByUid(id:Long):List<Account>

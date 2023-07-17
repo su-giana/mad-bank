@@ -17,22 +17,22 @@
         WHERE user_id = #{userId}
     </update>
 
-    <insert id="insertTransaction" keyProperty="transaction_id" useGeneratedKeys="true">
-        INSERT INTO transaction (sender_id, receiver_id, transaction_type, cost, result_code)
+    <insert id="insertTransaction" useGeneratedKeys="true" keyProperty="transactionId">
+        INSERT INTO transaction (sender_account_id, receiver_account_id, transaction_type, cost, result_code)
         VALUES (#{senderId}, #{receiverId}, #{transactionType}, #{cost}, #{resultCode})
 
     </insert>
 
     <update id="changeResultcode">
         UPDATE transaction
-        SET resultCode = 'Success'
-        WHERE transactionId = #{transactionId}
+        SET result_code = 'Success'
+        WHERE transaction_id = #{transactionId}
     </update>
 
     <select id="getAllTransactionWithAccountId" resultMap="TransactionResultMap">
         SELECT *
         FROM transaction
-        WHERE sender_id = #{accountId} OR receiver_id = #{accountId}
+        WHERE sender_account_id = #{accountId} OR receiver_account_id = #{accountId}
     </select>
 
 </mapper>
