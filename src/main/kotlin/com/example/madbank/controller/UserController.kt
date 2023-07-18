@@ -42,6 +42,12 @@ class UserController {
             else        return ResponseEntity.ok("VALID")
     }
 
+    @GetMapping("form")
+    public fun formPage():String
+    {
+        return "form"
+    }
+
     @GetMapping("login")
     public fun loginPage():String
     {

@@ -40,6 +40,7 @@ class TransactionController {
 
         if(!(accountService.isAccountAlreadyExist(senderAccountId) &&
                     accountService.isAccountAlreadyExist(receiverAccountId))) {
+
             return ResponseEntity.badRequest().body("User doesn't exist in DB haha from.\uD83D\uDC7B Junseo")
         }
         if(transactionType != "Transfer") {

@@ -8,6 +8,7 @@
         <result column="password" property="password"/>
         <result column="social_id" property="nationalId"/>
         <result column="signup_id" property="signUpId"/>
+        <result column="compact_password" property="compactPassword"/>
     </resultMap>
 
     <select id="getUserById" resultMap="UserResultMap">
@@ -30,9 +31,9 @@
 
     <insert id="insertUser">
         INSERT INTO user
-        (name, phone, password, dob, social_id, signup_id)
+        (name, phone, password, dob, social_id, signup_id, compact_password)
         VALUES
-            (#{name}, #{phone}, #{password}, #{dob}, #{nationalId}, #{signUpId})
+            (#{name}, #{phone}, #{password}, #{dob}, #{nationalId}, #{signUpId}, #{compactPassword})
     </insert>
 
     <update id="updateUser">

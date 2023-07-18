@@ -5,7 +5,6 @@ import com.example.madbank.model.Account
 
 
 interface TransactionService {
-
     public fun updateBalance(id:Long, balance:Long): Boolean
 
     public fun isBalanceEnough(id:Long, cost:Long): Boolean
