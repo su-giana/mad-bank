@@ -24,5 +24,7 @@ data class User (
 
         var nationalId:String,
 
-        var signUpId:String
+        var signUpId:String,
+
+        var compactPassword:String
 )

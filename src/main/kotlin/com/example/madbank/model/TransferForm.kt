@@ -10,5 +10,6 @@ data class TransferForm (
         val transactionType:String,
         val senderAccountId:Long,
         val receiverAccountNumber:String,
-        val cost:Long
+        val cost:Long,
+        val compactPassword:String
 )
