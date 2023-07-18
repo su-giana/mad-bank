@@ -8,6 +8,7 @@ import com.example.madbank.service.AccountService
 import com.example.madbank.service.TransactionService
 import com.example.madbank.service.UserService
 import com.example.madbank.user_exception.NotValidTokenException
+import com.example.madbank.user_exception.PasswordNotMatchesException
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
@@ -17,6 +18,9 @@ import org.springframework.web.bind.annotation.*
 @CrossOrigin(allowedHeaders = ["*"])
 @Controller
 class TransactionController {
+    @Autowired
+    lateinit var userService: UserService
+
     @Autowired
     lateinit var transactionService: TransactionService
 
@@ -28,6 +32,7 @@ class TransactionController {
 
     @PostMapping("/transfer_money")
     public fun transferMoney(
+            @RequestHeader("Authorization") token:String,
             @RequestBody transferForm: TransferForm
     ): ResponseEntity<String>
     {
@@ -35,6 +40,11 @@ class TransactionController {
         val senderAccountId: Long = transferForm.senderAccountId
         val receiverAccountNumber: String = transferForm.receiverAccountNumber
         val cost = transferForm.cost
+        val compactPassword:String = transferForm.compactPassword
+
+        if(!jwtTokenUtil.validateToken(token.substring(7))) throw NotValidTokenException("Not valid token to retrieve transfering money")
+
+        if(!userService.isSameKey(userService.getUserById(accountService.getUserIdByAccountId(senderAccountId)), compactPassword))  throw PasswordNotMatchesException("Password does not match")
 
         var receiverAccountId:Long = accountService.getAccountIdByAccountNumber(receiverAccountNumber)
 
@@ -59,6 +69,7 @@ class TransactionController {
 
     @PostMapping("/my_transfer")
     public fun myTransfer(
+            @RequestHeader("Authorization") token:String,
             @RequestBody transferForm: TransferForm
     ): ResponseEntity<String>
     {
@@ -66,6 +77,11 @@ class TransactionController {
         val senderAccountId: Long = transferForm.senderAccountId
         val receiverAccountNumber: String = transferForm.receiverAccountNumber
         val cost = transferForm.cost
+        val compactPassword:String = transferForm.compactPassword
+
+        if(!jwtTokenUtil.validateToken(token.substring(7))) throw NotValidTokenException("Not valid token to retrieve transfering money")
+
+        if(!userService.isSameKey(userService.getUserById(accountService.getUserIdByAccountId(senderAccountId)), compactPassword))  throw PasswordNotMatchesException("Password does not match")
 
         var receiverAccountId: Long = accountService.getAccountIdByAccountNumber(receiverAccountNumber)
 

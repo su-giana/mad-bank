@@ -96,7 +96,11 @@ class UserServiceImp :UserService{
     }
 
     override fun isSameKey(user: User, compactPassword: String): Boolean {
-        return passwordEncoder.matches(compactPassword, user.compactPassword)
+        if(passwordEncoder.matches(compactPassword, user.compactPassword))
+        {
+            return true;
+        }
+        return false;
     }
 
 }
