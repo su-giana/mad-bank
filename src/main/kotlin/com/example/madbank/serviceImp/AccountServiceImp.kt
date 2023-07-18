@@ -5,6 +5,8 @@ import com.example.madbank.model.Account
 import com.example.madbank.service.AccountService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Isolation
+import org.springframework.transaction.annotation.Transactional
 import kotlin.random.Random
 
 @Service
@@ -26,6 +28,7 @@ class AccountServiceImp:AccountService {
         return accountMapper.getAccountByUid(id)
     }
 
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     override fun getBalanceByAccountId(account_id: Long): Long {
         return accountMapper.getBalanceByAccountId(account_id)
     }

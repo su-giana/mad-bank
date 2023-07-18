@@ -24,68 +24,7 @@ class TransactionController {
     lateinit var accountService: AccountService
 
     @Autowired
-    lateinit var userService: UserService
-
-    @Autowired
     lateinit var jwtTokenUtil: JwtTokenUtil
-
-    @PostMapping("/self_transfer_money")
-    public fun transferSelfMoney(
-            @RequestBody transferForm: TransferForm
-    ): ResponseEntity<String>
-    {
-        val transactionType:String = transferForm.transactionType
-        val senderAccountId:Long = transferForm.senderAccountId
-        val receiverAccountNumber:String = transferForm.receiverAccountNumber
-        val cost = transferForm.cost
-        val compactPassword = transferForm.compactPassword
-
-        var receiverAccountId:Long = accountService.getAccountIdByAccountNumber(receiverAccountNumber)
-
-        try {
-            var sender:User = userService.getUserById(accountService.getUserIdByAccountId(accountService.getAccountIdByAccountNumber(receiverAccountNumber)))
-            if(!userService.isSameKey(sender, compactPassword)) return ResponseEntity.badRequest().body("Bad Credential")
-
-            if(accountService.isAccountAlreadyExist(senderAccountId)&&accountService.isAccountAlreadyExist(receiverAccountId)){
-                if(transactionService.isBalanceEnough(senderAccountId, cost) && (transactionType == "Transfer")){
-                    var item:Transaction = Transaction(0, senderAccountId, receiverAccountId, transactionType, cost, "Failed")
-                    transactionService.insertTransaction(item)
-
-                    val senderResult = transactionService.deductSenderBalance(senderAccountId, cost)
-                    val receiverResult = transactionService.addReceiverBalance(receiverAccountId, cost)
-                    if(senderResult && receiverResult){ // 둘다 잘 됨.
-                        var transactionId:Long = item.transactionId
-                        transactionService.admitTransfercode(transactionId)
-
-                        return ResponseEntity.ok("SUCCEED")
-                    }else if(senderResult){  //송금자 돈이 빠져나가기만 한 경우
-                        val recover = transactionService.addReceiverBalance(senderAccountId, cost)//근데 이게 실패하면 어떡해 ? ㅋㅋㅋㅋ
-                        if(recover){
-                            return ResponseEntity.internalServerError().body("sender Result FAILED but Recovered before state")
-                        }else{
-                            return ResponseEntity.internalServerError().body("sender Result FAILED and Can't Recovered before state")
-                        }
-//                        return ResponseEntity.ok("sender Result FAILED")
-                    }else if(receiverResult){
-                        val recover = transactionService.deductSenderBalance(receiverAccountId, cost)
-                        if(recover){
-                            return ResponseEntity.internalServerError().body("sender Result FAILED but Recovered before state")
-                        }else{
-                            return ResponseEntity.internalServerError().body("sender Result FAILED and Can't Recovered before state")
-                        }
-//                        return ResponseEntity.ok("receiver Result FAILED")
-                    }
-                }
-                return ResponseEntity.internalServerError().body("FAILED: No Enough Money or Not Transfer type")
-            }
-            return ResponseEntity.badRequest().body("User doesn't exist in DB haha from.\uD83D\uDC7B Jiyeon")
-
-        }catch (e:Exception)
-        {
-            return ResponseEntity.internalServerError().body("Cannot transfer money")
-        }
-    }
-
 
     @PostMapping("/transfer_money")
     public fun transferMoney(
@@ -96,52 +35,26 @@ class TransactionController {
         val senderAccountId:Long = transferForm.senderAccountId
         val receiverAccountNumber:String = transferForm.receiverAccountNumber
         val cost = transferForm.cost
-        val compactPassword = transferForm.compactPassword
 
         var receiverAccountId:Long = accountService.getAccountIdByAccountNumber(receiverAccountNumber)
 
-        try {
-            var sender:User = userService.getUserById(accountService.getUserIdByAccountId(senderAccountId))
-            if(!userService.isSameKey(sender, compactPassword)) return ResponseEntity.badRequest().body("Bad Credential")
-
-            if(accountService.isAccountAlreadyExist(senderAccountId)&&accountService.isAccountAlreadyExist(receiverAccountId)){
-                if(transactionService.isBalanceEnough(senderAccountId, cost) && (transactionType == "Transfer")){
-                    var item:Transaction = Transaction(0, senderAccountId, receiverAccountId, transactionType, cost, "Failed")
-                    transactionService.insertTransaction(item)
-
-                    val senderResult = transactionService.deductSenderBalance(senderAccountId, cost)
-                    val receiverResult = transactionService.addReceiverBalance(receiverAccountId, cost)
-                    if(senderResult && receiverResult){ // 둘다 잘 됨.
-                        var transactionId:Long = item.transactionId
-                        transactionService.admitTransfercode(transactionId)
-
-                        return ResponseEntity.ok("SUCCEED")
-                    }else if(senderResult){  //송금자 돈이 빠져나가기만 한 경우
-                        val recover = transactionService.addReceiverBalance(senderAccountId, cost)//근데 이게 실패하면 어떡해 ? ㅋㅋㅋㅋ
-                        if(recover){
-                            return ResponseEntity.internalServerError().body("sender Result FAILED but Recovered before state")
-                        }else{
-                            return ResponseEntity.internalServerError().body("sender Result FAILED and Can't Recovered before state")
-                        }
-//                        return ResponseEntity.ok("sender Result FAILED")
-                    }else if(receiverResult){
-                        val recover = transactionService.deductSenderBalance(receiverAccountId, cost)
-                        if(recover){
-                            return ResponseEntity.internalServerError().body("sender Result FAILED but Recovered before state")
-                        }else{
-                            return ResponseEntity.internalServerError().body("sender Result FAILED and Can't Recovered before state")
-                        }
-//                        return ResponseEntity.ok("receiver Result FAILED")
-                    }
-                }
-                return ResponseEntity.internalServerError().body("FAILED: No Enough Money or Not Transfer type")
-            }
-            return ResponseEntity.badRequest().body("User doesn't exist in DB haha from.\uD83D\uDC7B Jiyeon")
-
-        }catch (e:Exception)
-        {
-            return ResponseEntity.internalServerError().body("Cannot transfer money")
+        if(!(accountService.isAccountAlreadyExist(senderAccountId) &&
+                        accountService.isAccountAlreadyExist(receiverAccountId))) {
+            return ResponseEntity.badRequest().body("User doesn't exist in DB haha from.\uD83D\uDC7B Junseo")
         }
+        if(transactionType != "Transfer") {
+            return ResponseEntity.badRequest().body("Transaction type is not Transfer")
+        }
+
+        try {
+            transactionService.transferAtOnce(senderAccountId, receiverAccountId, cost)
+        } catch(e:Exception) {
+            // rollback occured
+            println("rollback occured")
+            return ResponseEntity.internalServerError().body("rollback occured! FAILED: transfer money failed")
+        }
+
+        return ResponseEntity.ok("SUCCEED")
     }
 
     @PostMapping("/my_transfer")

@@ -49,6 +49,7 @@
         SELECT balance
         FROM account
         WHERE account_id = #{account_id}
+        FOR UPDATE
     </select>
 
     <select id="getUserIdByAccountId" resultType="Long">

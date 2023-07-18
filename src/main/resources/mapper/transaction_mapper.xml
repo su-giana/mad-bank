@@ -11,6 +11,13 @@
         <result column="result_code" property="resultCode"/>
     </resultMap>
 
+    <update id="xLockForTransfer">
+        SELECT balance
+        FROM account
+        WHERE account_id = #{senderAccountId} OR account_id = #{receiverAccountId}
+        FOR UPDATE
+    </update>
+
     <update id="updateBalance">
         UPDATE account
         SET balance = #{balance}

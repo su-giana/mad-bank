@@ -50,6 +50,10 @@ dependencies {
     testImplementation("io.projectreactor:reactor-test")
     testImplementation("org.mybatis.spring.boot:mybatis-spring-boot-starter-test:2.3.1")
     testImplementation("org.springframework.security:spring-security-test")
+
+    // https://mvnrepository.com/artifact/junit/junit
+    testImplementation("junit:junit:4.13.1")
+
 }
 
 tasks.withType<KotlinCompile> {
