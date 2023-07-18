@@ -65,23 +65,6 @@ class TransactionServiceImp:TransactionService {
         }
     }
 
-
-    override fun withdrawal(userId: Long, cost: Long): Boolean {
-        val balance = userMapper.getBalanceByuserId(userId)
-        val result = balance - cost
-        transactionMapper.updateBalance(userId, result)
-        return true //일단 무조건 성공한 걸로 하자
-    }
-
-    override fun deposit(userId: Long, cost: Long) : Boolean{
-        val balance = userMapper.getBalanceByuserId(userId)
-        val result = balance + cost
-        transactionMapper.updateBalance(userId, result)
-        return true //일단 무조건 성공한 걸로 하자
-    }
-
-
-
     override fun admitTransfercode(transactionId: Long) {
         //잘 되었다는 의미로 Failed에서 Success로 변경
         transactionMapper.changeResultcode(transactionId)

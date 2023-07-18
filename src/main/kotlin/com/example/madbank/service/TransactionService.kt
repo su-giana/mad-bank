@@ -6,7 +6,6 @@ import com.example.madbank.model.Account
 
 interface TransactionService {
 
-
     public fun isBalanceEnough(id:Long, cost:Long): Boolean
 
     public fun deductSenderBalance(senderAccountId: Long, cost: Long): Boolean
@@ -14,10 +13,6 @@ interface TransactionService {
     public fun addReceiverBalance(id: Long, cost: Long): Boolean
 
     public fun insertTransaction(item:Transaction):Boolean
-
-    public fun withdrawal(userId:Long, cost:Long): Boolean
-
-    public fun deposit(userId:Long, cost:Long): Boolean
 
     public fun admitTransfercode(transactionId:Long)
 

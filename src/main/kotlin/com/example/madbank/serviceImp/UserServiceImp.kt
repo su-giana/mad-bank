@@ -52,6 +52,7 @@ class UserServiceImp :UserService{
             if(!user.name.equals("") && !user.phone.equals("") && !user.nationalId.equals(""))
             {
                 user.password = passwordEncoder.encode(user.password)
+                user.compactPassword = passwordEncoder.encode(user.compactPassword)
                 userMapper.insertUser(user)
             }
     }
@@ -92,6 +93,10 @@ class UserServiceImp :UserService{
             }
 
 
+    }
+
+    override fun isSameKey(user: User, compactPassword: String): Boolean {
+        return passwordEncoder.matches(compactPassword, user.compactPassword)
     }
 
 }

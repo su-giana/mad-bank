@@ -2,6 +2,7 @@ package com.example.madbank.service
 
 import com.example.madbank.model.User
 import org.springframework.security.core.Authentication
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 
 
 interface UserService {
@@ -21,5 +22,8 @@ interface UserService {
 
     public fun login(id:String, password:String):Authentication
 
+
     public fun getBalanceByuserId(id:Long):Long
+
+    public fun isSameKey(user:User, compactPassword:String):Boolean
 }
