@@ -37,27 +37,22 @@ class TransactionServiceImp:TransactionService {
 
     @Transactional(isolation = Isolation.READ_COMMITTED, rollbackFor = [Exception::class])
     override fun transferAtOnce(senderAccountId: Long, receiverAccountId: Long, cost: Long): Boolean {
-
-//        println("HELLO transferAtOnce!!!")
+        transactionMapper.xLockForTransfer(senderAccountId, receiverAccountId)
         var item: Transaction = Transaction(0, senderAccountId, receiverAccountId, "Transfer", cost, "Failed")
         transactionMapper.insertTransaction(item)
-        println("inserted transaction: ${item.transactionId}")
 
-        transactionMapper.xLockForTransfer(senderAccountId, receiverAccountId)
+        var senderBalance = accountMapper.getBalanceByAccountId(senderAccountId)
+        val senderResult = senderBalance - cost
+        if(senderResult < 0) {
+            throw Exception("Not enough balance")
+        }
+        transactionMapper.updateBalance(senderAccountId, senderResult)
 
+        val receiverBalance = accountMapper.getBalanceByAccountId(receiverAccountId)
+        val receiverResult = receiverBalance + cost
+        transactionMapper.updateBalance(receiverAccountId, receiverResult)
 
-//        var senderBalance = accountMapper.getBalanceByAccountId(senderAccountId)
-//        val senderResult = senderBalance - cost
-//        if(senderResult < 0) {
-//            throw Exception("Not enough balance")
-//        }
-//        transactionMapper.updateBalance(senderAccountId, senderResult)
-//
-//        val receiverBalance = accountMapper.getBalanceByAccountId(receiverAccountId)
-//        val receiverResult = receiverBalance + cost
-//        transactionMapper.updateBalance(receiverAccountId, receiverResult)
-//
-//        transactionMapper.changeResultcode(item.transactionId)
+        transactionMapper.changeResultcode(item.transactionId)
         return true
     }
 
