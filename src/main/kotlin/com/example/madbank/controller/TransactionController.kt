@@ -40,36 +40,37 @@ class TransactionController {
 
         try {
             if(accountService.isAccountAlreadyExist(senderAccountId)&&accountService.isAccountAlreadyExist(receiverAccountId)){
-                if(transactionService.isBalanceEnough(senderAccountId, cost) && (transactionType == "Transfer")){
-                    var item:Transaction = Transaction(0, senderAccountId, receiverAccountId, transactionType, cost, "Failed")
+                if(transactionService.isBalanceEnough(senderAccountId, cost) && (transactionType == "Transfer")) {
+                    var item: Transaction = Transaction(0, senderAccountId, receiverAccountId, transactionType, cost, "Failed")
                     transactionService.insertTransaction(item)
 
-                    val senderResult = transactionService.deductSenderBalance(senderAccountId, cost)
-                    val receiverResult = transactionService.addReceiverBalance(receiverAccountId, cost)
-                    if(senderResult && receiverResult){ // 둘다 잘 됨.
-                        var transactionId:Long = item.transactionId
+                    val totalResult = transactionService.transferAtOnce(senderAccountId, receiverAccountId, cost)
+                    if (totalResult) { // 둘다 잘 됨.
+                        var transactionId: Long = item.transactionId
                         transactionService.admitTransfercode(transactionId)
 
                         return ResponseEntity.ok("SUCCEED")
-                    }else if(senderResult){  //송금자 돈이 빠져나가기만 한 경우
-                        val recover = transactionService.deposit(senderAccountId, cost)//근데 이게 실패하면 어떡해 ? ㅋㅋㅋㅋ
-                        if(recover){
-                            return ResponseEntity.internalServerError().body("sender Result FAILED but Recovered before state")
-                        }else{
-                            return ResponseEntity.internalServerError().body("sender Result FAILED and Can't Recovered before state")
-                        }
-//                        return ResponseEntity.ok("sender Result FAILED")
-                    }else if(receiverResult){
-                        val recover = transactionService.withdrawal(receiverAccountId, cost)
-                        if(recover){
-                            return ResponseEntity.internalServerError().body("sender Result FAILED but Recovered before state")
-                        }else{
-                            return ResponseEntity.internalServerError().body("sender Result FAILED and Can't Recovered before state")
-                        }
-//                        return ResponseEntity.ok("receiver Result FAILED")
                     }
+//                        if(senderResult){  //송금자 돈이 빠져나가기만 한 경우
+//                        val recover = transactionService.deposit(senderAccountId, cost)//근데 이게 실패하면 어떡해 ? ㅋㅋㅋㅋ
+//                        if(recover){
+//                            return ResponseEntity.internalServerError().body("sender Result FAILED but Recovered before state")
+//                        }else{
+//                            return ResponseEntity.internalServerError().body("sender Result FAILED and Can't Recovered before state")
+//                        }
+////                        return ResponseEntity.ok("sender Result FAILED")
+//                    }else if(receiverResult){
+//                        val recover = transactionService.withdrawal(receiverAccountId, cost)
+//                        if(recover){
+//                            return ResponseEntity.internalServerError().body("sender Result FAILED but Recovered before state")
+//                        }else{
+//                            return ResponseEntity.internalServerError().body("sender Result FAILED and Can't Recovered before state")
+//                        }
+////                        return ResponseEntity.ok("receiver Result FAILED")
+//                    }
+
                 }
-                return ResponseEntity.internalServerError().body("FAILED: No Enough Money or Not Transfer type")
+                return ResponseEntity.internalServerError().body("FAILED: transfer money failed")
             }
             return ResponseEntity.badRequest().body("User doesn't exist in DB haha from.\uD83D\uDC7B Jiyeon")
 

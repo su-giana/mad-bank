@@ -13,6 +13,8 @@ interface TransactionService {
 
     public fun addReceiverBalance(id: Long, cost: Long): Boolean
 
+    public fun transferAtOnce(senderAccountId: Long, receiverAccountId:Long, cost: Long): Boolean
+
     public fun insertTransaction(item:Transaction):Boolean
 
     public fun withdrawal(userId:Long, cost:Long): Boolean

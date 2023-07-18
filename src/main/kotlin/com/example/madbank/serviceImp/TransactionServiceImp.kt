@@ -6,7 +6,6 @@ import com.example.madbank.mapper.UserMapper
 import com.example.madbank.model.Transaction
 import com.example.madbank.service.TransactionService
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.data.jpa.domain.AbstractPersistable_.id
 import org.springframework.stereotype.Service
 
 @Service
@@ -24,6 +23,21 @@ class TransactionServiceImp:TransactionService {
         val balance = accountMapper.getBalanceByAccountId(id)
         if (balance > cost) {
             return true
+        }
+        return false
+    }
+
+    override fun transferAtOnce(senderAccountId: Long, receiverAccountId: Long, cost: Long): Boolean {
+        var senderBalance = accountMapper.getBalanceByAccountId(senderAccountId)
+        val senderResult = senderBalance - cost
+        transactionMapper.updateBalance(senderAccountId, senderResult)
+        var senderCheck: Boolean = (senderResult == accountMapper.getBalanceByAccountId(senderAccountId))
+        val receiverBalance = accountMapper.getBalanceByAccountId(receiverAccountId)
+        val receiverResult = receiverBalance + cost
+        transactionMapper.updateBalance(receiverAccountId, receiverResult)
+        var receiverCheck: Boolean = (receiverResult == accountMapper.getBalanceByAccountId(receiverAccountId))
+        if(senderCheck&&receiverCheck){
+            return true // 이거 인식이 안 되는 거 같음...
         }
         return false
     }
