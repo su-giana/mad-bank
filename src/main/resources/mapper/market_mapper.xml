@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.madbank.mapper.MarketMapper">
+
+    <resultMap id="MarketResultMap" type="Market">
+        <result column="product_id" property="productId" />
+        <result column="product_name" property="productName" />
+        <result column="product_price" property="productPrice" />
+        <result column="seller_user_id" property="sellerUserId" />
+        <result column="seller_account_number" property="sellerAccountNumber" />
+        <result column="product_img" property="productImg" />
+    </resultMap>
+
+    <select id="getProductList" resultMap="MarketResultMap">
+        SELECT *
+        FROM market
+    </select>
+
+</mapper>
