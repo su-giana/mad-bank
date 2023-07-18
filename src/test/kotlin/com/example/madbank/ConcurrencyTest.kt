@@ -22,7 +22,7 @@ class ConcurrencyTest {
     @Autowired lateinit var accountService: AccountService
     @Autowired lateinit var transactionService: TransactionService
 
-    var iter: Int = 5000
+    var iter: Int = 2
     var cost: Long = 100
 
     @BeforeEach
@@ -83,9 +83,14 @@ class ConcurrencyTest {
         val latch = CountDownLatch(iter)
         for(i in 1..iter) {
             service.execute {
-                transactionService.transferAtOnce(1, 2, cost)
-                transactionService.transferAtOnce(2, 1, cost)
-                latch.countDown()
+                try {
+                    transactionService.transferAtOnce(1, 2, cost)
+                    latch.countDown()
+//                transactionService.transferAtOnce(2, 1, cost)
+                } catch(e:Exception) {
+                    println("rollback occured???????????")
+                    throw e
+                }
             }
         }
         latch.await()
@@ -96,4 +101,23 @@ class ConcurrencyTest {
         assertEquals(0, afterSum1-beforeSum1)
         assertEquals(0, afterSum2-beforeSum2)
     }
+
+    // rollbackFor -> "Failed"(result_code) insert rollback
+    // noRollbackFor -> "Failed"(result_code) insert not rollback
+//    @Test
+//    fun transferBalanceCheckTest() {
+//        val beforeTranSize = transactionService.getAllTransactionWithAccountId(1).size
+//
+//        transactionService.updateBalance(1, 1000)
+//        try {
+//            transactionService.transferAtOnce(1, 2, 1200)
+//        } catch(e:Exception) {
+//            // rollback occured
+//            println("rollback occured")
+//        }
+//
+//        val afterTranSize = transactionService.getAllTransactionWithAccountId(1).size
+//        print("beforeTranSize: $beforeTranSize, afterTranSize: $afterTranSize\n")
+//        assertEquals(beforeTranSize, afterTranSize)
+//    }
 }

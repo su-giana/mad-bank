@@ -35,26 +35,33 @@ class TransactionServiceImp:TransactionService {
         return false
     }
 
-    @Transactional(isolation = Isolation.READ_COMMITTED)
+    @Transactional(isolation = Isolation.READ_COMMITTED, rollbackFor = [Exception::class])
     override fun transferAtOnce(senderAccountId: Long, receiverAccountId: Long, cost: Long): Boolean {
+
+//        println("HELLO transferAtOnce!!!")
+        var item: Transaction = Transaction(0, senderAccountId, receiverAccountId, "Transfer", cost, "Failed")
+        transactionMapper.insertTransaction(item)
+        println("inserted transaction: ${item.transactionId}")
+
         transactionMapper.xLockForTransfer(senderAccountId, receiverAccountId)
 
-        var senderBalance = accountMapper.getBalanceByAccountId(senderAccountId)
-        val senderResult = senderBalance - cost
-        transactionMapper.updateBalance(senderAccountId, senderResult)
-//        var senderCheck: Boolean = (senderResult == accountMapper.getBalanceByAccountId(senderAccountId))
-        val receiverBalance = accountMapper.getBalanceByAccountId(receiverAccountId)
-        val receiverResult = receiverBalance + cost
-        transactionMapper.updateBalance(receiverAccountId, receiverResult)
-        return true
-//        var receiverCheck: Boolean = (receiverResult == accountMapper.getBalanceByAccountId(receiverAccountId))
-//        if(senderCheck&&receiverCheck){
-//            return true // 이거 인식이 안 되는 거 같음...
+
+//        var senderBalance = accountMapper.getBalanceByAccountId(senderAccountId)
+//        val senderResult = senderBalance - cost
+//        if(senderResult < 0) {
+//            throw Exception("Not enough balance")
 //        }
-//        return false
+//        transactionMapper.updateBalance(senderAccountId, senderResult)
+//
+//        val receiverBalance = accountMapper.getBalanceByAccountId(receiverAccountId)
+//        val receiverResult = receiverBalance + cost
+//        transactionMapper.updateBalance(receiverAccountId, receiverResult)
+//
+//        transactionMapper.changeResultcode(item.transactionId)
+        return true
     }
 
-    @Transactional(isolation = Isolation.READ_COMMITTED)
+    @Transactional(isolation = Isolation.READ_COMMITTED, rollbackFor = [Exception::class])
     override fun deductSenderBalance(senderAccountId: Long, cost: Long) : Boolean{
         //transfer인 경우에만 이용. sender의 balance에서 cost 만큼 차감한 값을 반환.
         var balance = accountMapper.getBalanceByAccountId(senderAccountId)
@@ -67,7 +74,7 @@ class TransactionServiceImp:TransactionService {
 //        return false
     }
 
-    @Transactional(isolation = Isolation.READ_COMMITTED)
+    @Transactional(isolation = Isolation.READ_COMMITTED, rollbackFor = [Exception::class])
     override fun addReceiverBalance(receiverAccountId: Long, cost: Long): Boolean {
         //transfer인 경우에만 이용. receiver의 balance에서 cost 만큼 더하여 업데이트함.
         val balance = accountMapper.getBalanceByAccountId(receiverAccountId)
