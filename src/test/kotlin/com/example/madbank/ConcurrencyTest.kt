@@ -22,7 +22,7 @@ class ConcurrencyTest {
     @Autowired lateinit var accountService: AccountService
     @Autowired lateinit var transactionService: TransactionService
 
-    var iter: Int = 2
+    var iter: Int = 2000
     var cost: Long = 100
 
     @BeforeEach
@@ -83,14 +83,9 @@ class ConcurrencyTest {
         val latch = CountDownLatch(iter)
         for(i in 1..iter) {
             service.execute {
-                try {
-                    transactionService.transferAtOnce(1, 2, cost)
-                    latch.countDown()
-//                transactionService.transferAtOnce(2, 1, cost)
-                } catch(e:Exception) {
-                    println("rollback occured???????????")
-                    throw e
-                }
+                transactionService.transferAtOnce(1, 2, cost)
+                transactionService.transferAtOnce(2, 1, cost)
+                latch.countDown()
             }
         }
         latch.await()
