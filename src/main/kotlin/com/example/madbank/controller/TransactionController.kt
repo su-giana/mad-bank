@@ -39,7 +39,8 @@ class TransactionController {
         var receiverAccountId:Long = accountService.getAccountIdByAccountNumber(receiverAccountNumber)
 
         if(!(accountService.isAccountAlreadyExist(senderAccountId) &&
-                        accountService.isAccountAlreadyExist(receiverAccountId))) {
+                    accountService.isAccountAlreadyExist(receiverAccountId))) {
+
             return ResponseEntity.badRequest().body("User doesn't exist in DB haha from.\uD83D\uDC7B Junseo")
         }
         if(transactionType != "Transfer") {
