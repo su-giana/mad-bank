@@ -31,9 +31,9 @@ class TransactionController {
             @RequestBody transferForm: TransferForm
     ): ResponseEntity<String>
     {
-        val transactionType:String = transferForm.transactionType
-        val senderAccountId:Long = transferForm.senderAccountId
-        val receiverAccountNumber:String = transferForm.receiverAccountNumber
+        val transactionType: String = transferForm.transactionType
+        val senderAccountId: Long = transferForm.senderAccountId
+        val receiverAccountNumber: String = transferForm.receiverAccountNumber
         val cost = transferForm.cost
 
         var receiverAccountId:Long = accountService.getAccountIdByAccountNumber(receiverAccountNumber)
@@ -50,7 +50,6 @@ class TransactionController {
             transactionService.transferAtOnce(senderAccountId, receiverAccountId, cost)
         } catch(e:Exception) {
             // rollback occured
-            println("rollback occured")
             return ResponseEntity.internalServerError().body("rollback occured! FAILED: transfer money failed")
         }
 
@@ -62,42 +61,39 @@ class TransactionController {
             @RequestBody transferForm: TransferForm
     ): ResponseEntity<String>
     {
-        val transactionType:String = transferForm.transactionType
-        val senderAccountId:Long = transferForm.senderAccountId
-        val receiverAccountNumber:String = transferForm.receiverAccountNumber
+        val transactionType: String = transferForm.transactionType
+        val senderAccountId: Long = transferForm.senderAccountId
+        val receiverAccountNumber: String = transferForm.receiverAccountNumber
         val cost = transferForm.cost
 
-        var receiverAccountId:Long = accountService.getAccountIdByAccountNumber(receiverAccountNumber)
+        var receiverAccountId: Long = accountService.getAccountIdByAccountNumber(receiverAccountNumber)
 
-        try {
-            if(senderAccountId==receiverAccountId){
-                if (accountService.isAccountAlreadyExist(senderAccountId)) {
-                    if (transactionType == "Deposit") {
-                        var item:Transaction = Transaction(0, senderAccountId, receiverAccountId, transactionType, cost, "Failed")
-                        transactionService.insertTransaction(item)
-
-                        val recover = transactionService.addReceiverBalance(senderAccountId, cost)
-                        var transactionId:Long = item.transactionId
-                        transactionService.admitTransfercode(transactionId)
-                        return ResponseEntity.ok("SUCCEED")
-                    }else if((transactionType =="Withdrawal")&&transactionService.isBalanceEnough(senderAccountId, cost)){
-                        var item:Transaction = Transaction(0, senderAccountId, receiverAccountId, transactionType, cost, "Failed")
-                        transactionService.insertTransaction(item)
-
-                        val recover = transactionService.deductSenderBalance(senderAccountId, cost)
-                        var transactionId = item.transactionId
-                        transactionService.admitTransfercode(transactionId)
-                        return ResponseEntity.ok("SUCCEED")
-                    }
-                    return ResponseEntity.badRequest().body("FAILED: No Enough Money or Not proper type")
-                }
-            }
-            return ResponseEntity.badRequest().body("User doesn't exist in DB haha from.\uD83D\uDC7B Jiyeon")
-
-        }catch (e:Exception)
-        {
-            return ResponseEntity.badRequest().body("Cannot transfer money")
+        if(senderAccountId != receiverAccountId) {
+            return ResponseEntity.badRequest().body("sender account != receiver account")
         }
+        if(!accountService.isAccountAlreadyExist(senderAccountId)) {
+            return ResponseEntity.badRequest().body("User doesn't exist in DB haha from.\uD83D\uDC7B Junseo")
+        }
+
+        if(transactionType == "Deposit") {
+            try {
+                transactionService.addReceiverBalance(senderAccountId, cost)
+                return ResponseEntity.ok("SUCCEED")
+            } catch(e:Exception) {
+                // rollback occured
+                return ResponseEntity.internalServerError().body("Unexpected error")
+            }
+        }
+        else if(transactionType == "Withdrawal") {
+            try {
+                transactionService.deductSenderBalance(senderAccountId, cost)
+                return ResponseEntity.ok("SUCCEED")
+            } catch(e:Exception) {
+                // rollback occured
+                return ResponseEntity.internalServerError().body("FAILED: No Enough Money or Unexpected error")
+            }
+        }
+        return ResponseEntity.badRequest().body("FAILED: Not proper type")
     }
 
     @GetMapping("/consume_list")
