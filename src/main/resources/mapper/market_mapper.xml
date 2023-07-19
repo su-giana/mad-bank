@@ -16,4 +16,10 @@
         FROM market
     </select>
 
+    <select id="getProductById" resultMap="MarketResultMap">
+        SELECT *
+        FROM market
+        WHERE product_id=#{id}
+    </select>
+
 </mapper>

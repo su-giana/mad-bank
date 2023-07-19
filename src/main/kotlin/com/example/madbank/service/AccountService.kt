@@ -14,4 +14,6 @@ interface AccountService {
     public fun getBalanceByAccountId(id:Long):Long
 
     public fun getAccountIdByAccountNumber(account:String):Long
+
+    public fun getAccountByAid(id:Long):Account
 }

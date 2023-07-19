@@ -14,4 +14,8 @@ class MarketServiceImp:MarketService {
     override fun getProductList():List<Market> {
         return marketMapper.getProductList()
     }
+
+    override fun getProductById(id: Long): Market {
+        return marketMapper.getProductById(id)
+    }
 }

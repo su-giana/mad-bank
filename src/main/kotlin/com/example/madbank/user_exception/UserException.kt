@@ -15,6 +15,8 @@ class AlreadyRegisteredException(message:String):RuntimeException(message){}
 
 class BankAccountNotExist(message: String):RuntimeException(message){}
 
+class NotValidTransferException(message: String):RuntimeException(message){}
+
 @ControllerAdvice
 class GlobalExceptionHandler {
 
@@ -26,6 +28,12 @@ class GlobalExceptionHandler {
 
     @ExceptionHandler(PasswordNotMatchesException::class)
     fun handlePasswordNotMatchesException(ex: PasswordNotMatchesException): ResponseEntity<String> {
+        ex.printStackTrace()
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.message)
+    }
+
+    @ExceptionHandler(NotValidTransferException::class)
+    fun handlePasswordNotMatchesException(ex: NotValidTransferException): ResponseEntity<String> {
         ex.printStackTrace()
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.message)
     }

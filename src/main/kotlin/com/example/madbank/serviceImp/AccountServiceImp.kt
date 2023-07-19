@@ -37,6 +37,10 @@ class AccountServiceImp:AccountService {
         return accountMapper.getAccountIdByAccountNumber(account)
     }
 
+    override fun getAccountByAid(id: Long): Account {
+        return accountMapper.getAccountByAid(id)
+    }
+
     override fun getUserIdByAccountId(account_id: Long): Long {
         return accountMapper.getUserIdByAccountId(account_id)
     }

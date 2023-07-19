@@ -6,4 +6,6 @@ import org.apache.ibatis.annotations.Mapper
 @Mapper
 interface MarketMapper {
     public fun getProductList():List<Market>
+
+    public fun getProductById(id:Long):Market
 }

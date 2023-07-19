@@ -1,10 +1,9 @@
 package com.example.madbank.controller
 
-import com.example.madbank.model.Transaction
-import com.example.madbank.model.TransferForm
-import com.example.madbank.model.User
+import com.example.madbank.model.*
 import com.example.madbank.security.JwtTokenUtil
 import com.example.madbank.service.AccountService
+import com.example.madbank.service.MarketService
 import com.example.madbank.service.TransactionService
 import com.example.madbank.service.UserService
 import com.example.madbank.user_exception.NotValidTokenException
@@ -13,6 +12,7 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
+import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.*
 
 @CrossOrigin(allowedHeaders = ["*"])
@@ -29,6 +29,9 @@ class TransactionController {
 
     @Autowired
     lateinit var jwtTokenUtil: JwtTokenUtil
+
+    @Autowired
+    lateinit var marketService: MarketService
 
     @PostMapping("/transfer_money")
     public fun transferMoney(
@@ -123,4 +126,58 @@ class TransactionController {
         return ResponseEntity.ok(json)
     }
 
+    @GetMapping("transaction_done")
+    public fun transactionFinish(@RequestParam(value = "transactionType", required = true) code:Int):String
+    {
+        if(code == 200)
+        {
+            return "success"
+        }
+        else
+        {
+            return "fail"
+        }
+    }
+
+    @PostMapping("/transaction")
+    public fun executeQuery(@RequestParam("aid") aid: String,
+                            @RequestParam("pid") pid: String,
+                            @RequestParam("token") token: String,
+                            model: Model
+                            ):String
+    {
+
+        var pid = pid.toLong()
+        var aid = aid.toLong()
+
+        var product:Market = marketService.getProductById(pid)
+
+
+        val transactionType: String = "Transfer"
+        val senderAccountId: Long = aid
+        val receiverAccountNumber: String = product.sellerAccountNumber
+        val cost:String = product.productPrice
+
+        if(!jwtTokenUtil.validateToken(token)) throw NotValidTokenException("Not valid token to retrieve transfering money")
+
+        var receiverAccountId:Long = accountService.getAccountIdByAccountNumber(receiverAccountNumber)
+
+        if(!(accountService.isAccountAlreadyExist(senderAccountId) &&
+                        accountService.isAccountAlreadyExist(receiverAccountId))) {
+
+            return "redirect:http://127.0.0.1:8080/transaction_done?transactionType=400"
+        }
+        if(transactionType != "Transfer") {
+            return "redirect:http://127.0.0.1:8080/transaction_done?transactionType=400"
+        }
+
+        try {
+            transactionService.transferAtOnce(senderAccountId, receiverAccountId, cost.toLong())
+        } catch(e:Exception) {
+            // rollback occured
+            return "redirect:http://127.0.0.1:8080/transaction_done?transactionType=400"
+        }
+
+        return "redirect:http://127.0.0.1:8080/transaction_done?transactionType=200"
+    }
 }

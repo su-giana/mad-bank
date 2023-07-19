@@ -1,9 +1,9 @@
 package com.example.madbank.controller
 
-import com.example.madbank.model.LoginForm
-import com.example.madbank.model.User
+import com.example.madbank.model.*
 import com.example.madbank.security.JwtTokenUtil
 import com.example.madbank.service.AccountService
+import com.example.madbank.service.MarketService
 import com.example.madbank.service.UserService
 import com.example.madbank.user_exception.AlreadyRegisteredException
 import com.example.madbank.user_exception.NotValidTokenException
@@ -13,12 +13,14 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.Authentication
 import org.springframework.stereotype.Controller
+import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestParam
+import java.time.LocalDate
 
 @CrossOrigin(allowedHeaders = ["*"])
 @Controller
@@ -32,6 +34,9 @@ class UserController {
 
     @Autowired
     lateinit var accountService: AccountService
+
+    @Autowired
+    lateinit var marketService: MarketService
 
     var objectMapper:ObjectMapper = ObjectMapper()
 
@@ -49,8 +54,11 @@ class UserController {
     }
 
     @GetMapping("login")
-    public fun loginPage():String
+    public fun loginPage(model:Model, @RequestParam(value = "account", required = true) aid:Long, @RequestParam(value = "product", required = true) pid:Long):String
     {
+        model.addAttribute("accountId", aid)
+        model.addAttribute("productId", pid)
+
         return "login"
     }
 
@@ -86,6 +94,36 @@ class UserController {
             var body:String = jwtTokenUtil.generateAccessToken(token)
 
             return ResponseEntity.ok(body)
+    }
+
+    @PostMapping("/pay_login")
+    public fun payLogin(payLoginForm: PayLoginForm, model:Model):String
+    {
+        try {
+            val id:String = payLoginForm.id
+            val password:String = payLoginForm.password
+            val pid:Long = payLoginForm.pid
+            val aid:Long = payLoginForm.aid
+
+            var token:Authentication = userService.login(id, password)
+            var body:String = jwtTokenUtil.generateAccessToken(token)
+
+            var product:Market = marketService.getProductById(pid);
+            var account:Account = accountService.getAccountByAid(aid);
+
+            if(product == null || account==null)    throw NotValidTokenException("product or account does not exist")
+
+            model.addAttribute("jwtToken", body)
+            model.addAttribute("product", product)
+            model.addAttribute("account", account)
+            model.addAttribute("date", LocalDate.now().toString())
+
+            return "form"
+        }
+        catch (e:Exception)
+        {
+            return "redirect:http://127.0.0.1:8080/transaction_done?transactionType=400"
+        }
     }
 
     @GetMapping("/signup")

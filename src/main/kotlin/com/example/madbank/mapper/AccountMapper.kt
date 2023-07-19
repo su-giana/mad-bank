@@ -20,4 +20,6 @@ interface AccountMapper {
     public fun getAccountIdByAccountNumber(account:String):Long
 
     public fun isAccountNumberAlreadyExist(account:String):Account
+
+    public fun getAccountByAid(id:Long):Account
 }

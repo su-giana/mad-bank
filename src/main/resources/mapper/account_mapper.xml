@@ -63,4 +63,10 @@
         FROM account
         WHERE account_number = #{account}
     </select>
+
+    <select id="getAccountByAid" resultMap="AccountResultMap">
+        SELECT *
+        FROM account
+        WHERE account_id = #{id}
+    </select>
 </mapper>
