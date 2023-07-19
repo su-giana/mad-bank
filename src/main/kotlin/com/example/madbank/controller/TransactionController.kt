@@ -129,14 +129,7 @@ class TransactionController {
     @GetMapping("transaction_done")
     public fun transactionFinish(@RequestParam(value = "transactionType", required = true) code:Int):String
     {
-        if(code == 200)
-        {
-            return "success"
-        }
-        else
-        {
-            return "fail"
-        }
+        return "pleasewait"
     }
 
     @PostMapping("/transaction")
