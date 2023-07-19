@@ -15,11 +15,12 @@ class AccountServiceImp:AccountService {
     @Autowired
     lateinit var accountMapper: AccountMapper
 
+    @Transactional(isolation = Isolation.READ_COMMITTED, rollbackFor = [Exception::class])
     override fun createAccount(userId: Long) {
-        lateinit var newAccountNumber:String
+        lateinit var newAccountNumber: String
         do {
             newAccountNumber = "7282618" + Random.nextInt(100000, 1000000);
-        }while(accountMapper.isAccountNumberAlreadyExist(newAccountNumber) != null)
+        } while(accountMapper.isAccountNumberAlreadyExist(newAccountNumber) != null)
 
         accountMapper.createAccount(userId, newAccountNumber)
     }
