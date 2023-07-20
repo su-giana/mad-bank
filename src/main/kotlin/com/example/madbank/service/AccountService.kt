@@ -16,4 +16,6 @@ interface AccountService {
     public fun getAccountIdByAccountNumber(account:String):Long
 
     public fun getAccountByAid(id:Long):Account
+
+    public fun getUsernameByNumber(number:String):String
 }

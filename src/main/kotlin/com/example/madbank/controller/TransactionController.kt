@@ -158,19 +158,19 @@ class TransactionController {
         if(!(accountService.isAccountAlreadyExist(senderAccountId) &&
                         accountService.isAccountAlreadyExist(receiverAccountId))) {
 
-            return "redirect:http://127.0.0.1:8080/transaction_done?transactionType=400"
+            return "redirect:http://172.10.5.135:80/transaction_done?transactionType=400"
         }
         if(transactionType != "Transfer") {
-            return "redirect:http://127.0.0.1:8080/transaction_done?transactionType=400"
+            return "redirect:http://172.10.5.135:80/transaction_done?transactionType=400"
         }
 
         try {
             transactionService.transferAtOnce(senderAccountId, receiverAccountId, cost.toLong())
         } catch(e:Exception) {
             // rollback occured
-            return "redirect:http://127.0.0.1:8080/transaction_done?transactionType=400"
+            return "redirect:http://172.10.5.135:80/transaction_done?transactionType=400"
         }
 
-        return "redirect:http://127.0.0.1:8080/transaction_done?transactionType=200"
+        return "redirect:http://172.10.5.135:80/transaction_done?transactionType=200"
     }
 }

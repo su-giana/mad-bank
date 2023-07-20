@@ -1,8 +1,12 @@
 package com.example.madbank.serviceImp
 
 import com.example.madbank.mapper.AccountMapper
+import com.example.madbank.mapper.UserMapper
 import com.example.madbank.model.Account
+import com.example.madbank.model.User
 import com.example.madbank.service.AccountService
+import com.example.madbank.user_exception.NotExistingAccountException
+import com.example.madbank.user_exception.NotExistingUserException
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Isolation
@@ -14,6 +18,9 @@ class AccountServiceImp:AccountService {
 
     @Autowired
     lateinit var accountMapper: AccountMapper
+
+    @Autowired
+    lateinit var userMapper:UserMapper
 
     @Transactional(isolation = Isolation.READ_COMMITTED, rollbackFor = [Exception::class])
     override fun createAccount(userId: Long) {
@@ -42,6 +49,22 @@ class AccountServiceImp:AccountService {
         return accountMapper.getAccountByAid(id)
     }
 
+    override fun getUsernameByNumber(number:String): String {
+        var account:Long = accountMapper.getAccountIdByAccountNumber(number)
+
+        if(account==null)  throw NotExistingAccountException("해당 계좌가 존재하지 않습니다")
+
+        var user:Long = accountMapper.getUserIdByAccountId(account)
+
+        if(user==null)  throw NotExistingAccountException("해당 계좌가 존재하지 않습니다")
+
+        var userObject:User = userMapper.getUserById(user)
+
+        if(userObject==null)  throw NotExistingUserException("해당 회원이 존재하지 않습니다")
+
+        return userObject.name
+    }
+
     override fun getUserIdByAccountId(account_id: Long): Long {
         return accountMapper.getUserIdByAccountId(account_id)
     }
@@ -50,5 +73,7 @@ class AccountServiceImp:AccountService {
         if(accountMapper.isAccountAlreadyExist(account_id)==null) return false
         return true
     }
+
+
 
 }

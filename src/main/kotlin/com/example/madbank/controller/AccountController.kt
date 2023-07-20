@@ -29,6 +29,13 @@ class AccountController {
 
     var objectMapper:ObjectMapper = ObjectMapper()
 
+    @GetMapping("/get_username_with_account_number")
+    public fun getUsernameWithNumber(@RequestHeader("Authorization")token: String, @RequestParam(value = "number", required = true) number:String):ResponseEntity<String>
+    {
+        var username:String =  accountService.getUsernameByNumber(number)
+        return ResponseEntity.ok(objectMapper.writeValueAsString(username))
+    }
+
     @GetMapping("/create_account")
     public fun createAccount(
             @RequestHeader("Authorization") token:String
@@ -55,7 +62,6 @@ class AccountController {
 
             var accounts:List<Account> = accountService.getAccountListByUid(id)
             var json:String = objectMapper.writeValueAsString(accounts)
-//            print(json)
             return ResponseEntity.ok(json)
         }
         catch (e:Exception)

@@ -17,6 +17,8 @@ class BankAccountNotExist(message: String):RuntimeException(message){}
 
 class NotValidTransferException(message: String):RuntimeException(message){}
 
+class NotExistingAccountException(message: String):RuntimeException(message){}
+
 @ControllerAdvice
 class GlobalExceptionHandler {
 
@@ -52,6 +54,12 @@ class GlobalExceptionHandler {
 
     @ExceptionHandler(BankAccountNotExist::class)
     fun handleBankAccountNotExist(ex: BankAccountNotExist):ResponseEntity<String>{
+        ex.printStackTrace()
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.message)
+    }
+
+    @ExceptionHandler(NotExistingAccountException::class)
+    fun handleBankAccountNotExist(ex: NotExistingAccountException):ResponseEntity<String>{
         ex.printStackTrace()
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.message)
     }
