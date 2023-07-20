@@ -79,7 +79,7 @@ class TransactionServiceImp:TransactionService {
         // transfer인 경우에만 이용. receiver의 balance에서 cost 만큼 더하여 업데이트함.
         val balance = accountMapper.getBalanceByAccountId(receiverAccountId)
 
-        var item = Transaction(0, receiverAccountId, receiverAccountId, "Withdrawal", cost, "Failed")
+        var item = Transaction(0, receiverAccountId, receiverAccountId, "Deposit", cost, "Failed")
         transactionMapper.insertTransaction(item)
 
         val result = balance + cost
