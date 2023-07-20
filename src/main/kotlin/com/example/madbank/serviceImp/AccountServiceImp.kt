@@ -49,8 +49,12 @@ class AccountServiceImp:AccountService {
         return accountMapper.getAccountByAid(id)
     }
 
-    override fun getUsernameByAid(id: Long): String {
-        var user:Long = accountMapper.getUserIdByAccountId(id)
+    override fun getUsernameByNumber(number:String): String {
+        var account:Long = accountMapper.getAccountIdByAccountNumber(number)
+
+        if(account==null)  throw NotExistingAccountException("해당 계좌가 존재하지 않습니다")
+
+        var user:Long = accountMapper.getUserIdByAccountId(account)
 
         if(user==null)  throw NotExistingAccountException("해당 계좌가 존재하지 않습니다")
 

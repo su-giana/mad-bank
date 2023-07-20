@@ -17,5 +17,5 @@ interface AccountService {
 
     public fun getAccountByAid(id:Long):Account
 
-    public fun getUsernameByAid(id:Long):String
+    public fun getUsernameByNumber(number:String):String
 }

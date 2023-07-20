@@ -30,9 +30,9 @@ class AccountController {
     var objectMapper:ObjectMapper = ObjectMapper()
 
     @GetMapping("/get_username_with_aid")
-    public fun getUsernameWithAid(@RequestHeader("Authorization")token: String, @RequestParam(value = "aid", required = true) aid:Long):ResponseEntity<String>
+    public fun getUsernameWithAid(@RequestHeader("Authorization")token: String, @RequestParam(value = "number", required = true) number:String):ResponseEntity<String>
     {
-        var username:String =  accountService.getUsernameByAid(aid)
+        var username:String =  accountService.getUsernameByNumber(number)
         return ResponseEntity.ok(objectMapper.writeValueAsString(username))
     }
 
