@@ -18,11 +18,6 @@
         <span>원</span>
       </div>
       <div class="d-flex flex-column">
-        <div class="d-flex align-items-center justify-content-between text">
-          <span class="">Commission</span>
-          <span class="ps-1">0</span>
-          <span class="ps-1">원</span>
-        </div>
         <div class="d-flex align-items-center justify-content-between text mb-4">
           <span>Total</span>
           <span class="ps-1" th:text="${product.productPrice}"></span>
@@ -41,16 +36,6 @@
                     </span>
           <span class="ps-3" th:text="${date}"></span>
         </div>
-        <div class="d-flex align-items-center justify-content-between text mt-5">
-          <div class="d-flex flex-column text">
-            <span>Customer Support:</span>
-            <span>online chat 24/7</span>
-          </div>
-          <div class="btn btn-primary rounded-circle">
-            <span class="fas fa-comment-alt"></span>
-          </div>
-        </div>
-      </div>
     </div>
     <div class="card box2 shadow-sm" style="max-width: 450px;">
       <div class="d-flex align-items-center justify-content-between p-md-5 p-4">
@@ -62,15 +47,15 @@
           <div class="d-flex flex-column ps-md-5 px-md-0 px-4 mb-4">
             <span class="ps-1">Account Number</span>
             <span class="form-control" th:text="${account.accountNumber}"></span>
-            <span class="fas fa-calendar-alt"></span>
           </div>
         </div>
         <div class="row">
           <div class="d-flex flex-column pe-md-5 px-md-0 px-4 mb-4">
             <span>잔액</span>
-            <span th:text="${account.balance}"></span>
-            <span>원</span>
-            <span class="fas fa-lock"></span>
+            <div class="row">
+              <span th:text="${account.balance}"></span>
+              <span>원</span>
+            </div>
           </div>
         </div>
       </div>
